@@ -61,15 +61,19 @@ def main():
     # Load .env file
     load_dotenv()
     
-    if len(sys.argv) > 2:
-        print("Usage: python create-issues.py [owner/repo]")
+    # Check for --yes flag
+    auto_confirm = '--yes' in sys.argv
+    args = [arg for arg in sys.argv[1:] if arg != '--yes']
+    
+    if len(args) > 1:
+        print("Usage: python create-issues.py [owner/repo] [--yes]")
         print("Example: python create-issues.py entropy-playground/entropy-playground")
-        print("Or just: python create-issues.py (uses GITHUB_REPO from .env)")
+        print("Or just: python create-issues.py --yes (uses GITHUB_REPO from .env)")
         sys.exit(1)
     
     # Get repo from argument or .env
-    if len(sys.argv) == 2:
-        repo = sys.argv[1]
+    if len(args) == 1:
+        repo = args[0]
     else:
         repo = os.environ.get('GITHUB_REPO')
         if not repo:
@@ -87,10 +91,13 @@ def main():
     print(f"Found {len(issues)} issues to create")
     
     # Confirm before creating
-    response = input("Do you want to create these issues? (y/N): ")
-    if response.lower() != 'y':
-        print("Aborted")
-        sys.exit(0)
+    if not auto_confirm:
+        response = input("Do you want to create these issues? (y/N): ")
+        if response.lower() != 'y':
+            print("Aborted")
+            sys.exit(0)
+    else:
+        print("Auto-confirming issue creation (--yes flag used)")
     
     # Create issues
     created = 0

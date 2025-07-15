@@ -64,9 +64,17 @@ dmypy.json
 .terraform.lock.hcl
 *.tfvars
 !example.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
 
 # Docker
 .dockerignore
+docker-compose.override.yml
+.docker/
 
 # Logs
 *.log
@@ -93,3 +101,15 @@ Thumbs.db
 .local/
 tmp/
 temp/
+
+# Claude/AI
+*.claude-cache/
+.claude/settings.local.json
+
+# Agent outputs
+agent_outputs/
+agent_logs/
+
+# Redis
+dump.rdb
+redis.log
