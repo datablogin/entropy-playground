@@ -1,16 +1,95 @@
 version: '3.8'
 
 services:
+  # Redis for state management and inter-agent communication
   redis:
-    image: redis:7
+    image: redis:7-alpine
+    container_name: entropy-redis
     ports:
       - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - entropy-network
 
+  # Main agent service
   agent:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    container_name: entropy-agent
     environment:
       - REDIS_URL=redis://redis:6379/0
       - GITHUB_TOKEN=${GITHUB_TOKEN}
       - CLAUDE_API_KEY=${CLAUDE_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - PYTHONPATH=/app
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    volumes:
+      # Mount source code for development
+      - ./entropy_playground:/app/entropy_playground:ro
+      - ./tests:/app/tests:ro
+      # Mount for agent workspace
+      - agent-workspace:/workspace
+      # Mount for logs
+      - ./logs:/app/logs
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - entropy-network
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /run
+
+  # Development tools container
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: entropy-dev
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - CLAUDE_API_KEY=${CLAUDE_API_KEY}
+      - PYTHONPATH=/app
+    volumes:
+      # Mount entire project for development
+      - .:/app
+      - dev-cache:/root/.cache
+    working_dir: /app
+    command: /bin/bash
+    stdin_open: true
+    tty: true
     depends_on:
       - redis
+    networks:
+      - entropy-network
+
+volumes:
+  redis-data:
+    driver: local
+  agent-workspace:
+    driver: local
+  dev-cache:
+    driver: local
+
+networks:
+  entropy-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
