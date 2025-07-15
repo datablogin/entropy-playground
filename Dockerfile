@@ -1,0 +1,15 @@
+FROM ubuntu:latest
+LABEL authors="rober"
+
+ENTRYPOINT ["top", "-b"]
+# Dockerfile
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+CMD ["python", "agentdev/main.py"]
