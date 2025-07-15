@@ -1,0 +1,28 @@
+# Development Environment Configuration
+environment = "dev"
+aws_region  = "us-east-1"
+
+# VPC Configuration
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+private_subnets    = ["10.0.1.0/24", "10.0.2.0/24"]
+public_subnets     = ["10.0.101.0/24", "10.0.102.0/24"]
+
+# EC2 Configuration
+agent_instance_type  = "t3.small"
+agent_instance_count = 1
+
+# Cost optimization for dev
+enable_nat_gateway = true
+single_nat_gateway = true
+
+# S3 Configuration
+s3_force_destroy   = true  # Allow destroying buckets with content in dev
+s3_lifecycle_days  = 7     # Shorter retention in dev
+
+# Tags
+additional_tags = {
+  Owner       = "DevTeam"
+  CostCenter  = "Engineering"
+  AutoShutdown = "true"
+}
