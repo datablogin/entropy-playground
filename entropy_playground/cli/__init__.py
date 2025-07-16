@@ -7,3 +7,8 @@ Provides commands for:
 - Monitoring agent status
 - Managing configurations
 """
+
+from .main import cli
+
+__all__ = ["cli"]
+
