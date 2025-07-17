@@ -130,7 +130,7 @@ class TestStructuredLogging:
 
     def test_logger_with_context(self):
         """Test logger with bound context."""
-        logger = get_logger("test", agent_id="agent-123", task_id="task-456")
+        get_logger("test", agent_id="agent-123", task_id="task-456")
 
         # Context should be included in all log messages
         with patch("structlog.get_logger") as mock_get_logger:
