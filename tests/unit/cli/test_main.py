@@ -48,13 +48,13 @@ def temp_config():
 
 class TestCLI:
     """Test main CLI functionality."""
-    
+
     def test_version(self, runner):
         """Test version display."""
         result = runner.invoke(cli, ["--version"])
         assert result.exit_code == 0
         assert __version__ in result.output
-    
+
     def test_help(self, runner):
         """Test help display."""
         result = runner.invoke(cli, ["--help"])
@@ -65,86 +65,91 @@ class TestCLI:
 
 class TestInitCommand:
     """Test init command."""
-    
+
     def test_init_success(self, runner, mock_github):
         """Test successful initialization."""
         with tempfile.TemporaryDirectory() as tmpdir:
             workspace = Path(tmpdir) / "entropy-workspace"
-            
+
             result = runner.invoke(
                 cli,
                 [
                     "init",
-                    "--workspace", str(workspace),
-                    "--github-token", "test-token",
-                    "--redis-url", "redis://test:6379",
+                    "--workspace",
+                    str(workspace),
+                    "--github-token",
+                    "test-token",
+                    "--redis-url",
+                    "redis://test:6379",
                 ],
             )
-            
+
             assert result.exit_code == 0
             assert "Environment initialized successfully!" in result.output
-            
+
             # Check workspace created
             assert workspace.exists()
             assert workspace.is_dir()
-            
+
             # Check config file created
             config_path = workspace / "config.yaml"
             assert config_path.exists()
-            
+
             # Validate config content
             with open(config_path) as f:
                 config = yaml.safe_load(f)
-            
+
             assert config["version"] == __version__
             assert config["workspace"] == str(workspace)
             assert config["redis_url"] == "redis://test:6379"
             assert config["github"]["token"] == "${GITHUB_TOKEN}"
-    
+
     def test_init_no_token(self, runner):
         """Test initialization without GitHub token."""
         with tempfile.TemporaryDirectory() as tmpdir:
             workspace = Path(tmpdir) / "entropy-workspace"
-            
+
             result = runner.invoke(
                 cli,
                 ["init", "--workspace", str(workspace)],
                 env={"GITHUB_TOKEN": ""},  # Clear env var
             )
-            
+
             assert result.exit_code == 1
             assert "GitHub token not provided" in result.output
-    
+
     def test_init_permission_error(self, runner):
         """Test initialization with permission error."""
         with patch("pathlib.Path.mkdir") as mock_mkdir:
             mock_mkdir.side_effect = PermissionError("Permission denied")
-            
+
             result = runner.invoke(
                 cli,
                 ["init", "--github-token", "test-token"],
             )
-            
+
             assert result.exit_code == 1
             assert "Permission denied" in result.output
-    
+
     def test_init_github_validation_failure(self, runner):
         """Test initialization with GitHub validation failure."""
         with patch("github.Github") as mock_github:
             mock_github.side_effect = Exception("Invalid token")
-            
+
             with tempfile.TemporaryDirectory() as tmpdir:
                 workspace = Path(tmpdir) / "entropy-workspace"
-                
+
                 result = runner.invoke(
                     cli,
                     [
                         "init",
-                        "--workspace", str(workspace),
-                        "--github-token", "invalid-token",
+                        "--workspace",
+                        str(workspace),
+                        "--github-token",
+                        "invalid-token",
                     ],
                 )
-                
+
                 # Should still succeed but with warning
                 assert result.exit_code == 0
                 assert "Could not verify GitHub token" in result.output
@@ -152,50 +157,50 @@ class TestInitCommand:
 
 class TestStartCommand:
     """Test start command."""
-    
+
     def test_start_all_agents(self, runner, temp_config):
         """Test starting all agents."""
         result = runner.invoke(
             cli,
             ["--config", str(temp_config), "start", "--repo", "owner/repo"],
         )
-        
+
         assert result.exit_code == 0
         assert "Starting all agent(s) for owner/repo" in result.output
         # Currently shows not implemented message
         assert "Agent startup not yet implemented" in result.output
-    
+
     def test_start_specific_agent(self, runner, temp_config):
         """Test starting specific agent."""
         result = runner.invoke(
             cli,
             ["--config", str(temp_config), "start", "--agent", "coder", "--repo", "owner/repo"],
         )
-        
+
         assert result.exit_code == 0
         assert "Starting coder agent(s) for owner/repo" in result.output
-    
+
     def test_start_with_issue(self, runner, temp_config):
         """Test starting with specific issue."""
         result = runner.invoke(
             cli,
             ["--config", str(temp_config), "start", "--repo", "owner/repo", "--issue", "42"],
         )
-        
+
         assert result.exit_code == 0
         assert "Working on issue #42" in result.output
-    
+
     def test_start_invalid_repo_format(self, runner, temp_config):
         """Test starting with invalid repository format."""
         result = runner.invoke(
             cli,
             ["--config", str(temp_config), "start", "--repo", "invalid-format"],
         )
-        
+
         assert result.exit_code == 1
         assert "Invalid repository format" in result.output
         assert "Expected format: owner/repo" in result.output
-    
+
     def test_start_no_config(self, runner):
         """Test starting without configuration."""
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -208,12 +213,12 @@ class TestStartCommand:
             }
             with open(config_path, "w") as f:
                 yaml.dump(config_data, f)
-            
+
             result = runner.invoke(
                 cli,
                 ["--config", str(config_path), "start", "--repo", "owner/repo"],
             )
-            
+
             assert result.exit_code == 1
             assert "GitHub token not configured" in result.output
             assert "Run 'entropy-playground init' first" in result.output
@@ -221,61 +226,61 @@ class TestStartCommand:
 
 class TestStatusCommand:
     """Test status command."""
-    
+
     def test_status_default(self, runner, temp_config):
         """Test status with default format."""
         result = runner.invoke(cli, ["--config", str(temp_config), "status"])
-        
+
         assert result.exit_code == 0
         assert "Agent Status" in result.output
         # Currently shows not implemented message
         assert "Status checking not yet implemented" in result.output
-    
+
     def test_status_json_format(self, runner, temp_config):
         """Test status with JSON format."""
         result = runner.invoke(cli, ["--config", str(temp_config), "status", "--format", "json"])
-        
+
         assert result.exit_code == 0
 
 
 class TestStopCommand:
     """Test stop command."""
-    
+
     def test_stop_all_agents(self, runner, temp_config):
         """Test stopping all agents."""
         result = runner.invoke(cli, ["--config", str(temp_config), "stop", "all"])
-        
+
         assert result.exit_code == 0
         assert "Stopping all agent(s)" in result.output
         # Currently shows not implemented message
         assert "Agent stopping not yet implemented" in result.output
-    
+
     def test_stop_specific_agent(self, runner, temp_config):
         """Test stopping specific agent."""
         result = runner.invoke(cli, ["--config", str(temp_config), "stop", "coder"])
-        
+
         assert result.exit_code == 0
         assert "Stopping coder agent(s)" in result.output
 
 
 class TestLogsCommand:
     """Test logs command."""
-    
+
     def test_logs_default(self, runner, temp_config):
         """Test logs with default options."""
         result = runner.invoke(cli, ["--config", str(temp_config), "logs"])
-        
+
         assert result.exit_code == 0
         assert "Showing logs for all agent(s)" in result.output
         # Currently shows not implemented message
         assert "Log viewing not yet implemented" in result.output
-    
+
     def test_logs_with_options(self, runner, temp_config):
         """Test logs with various options."""
         result = runner.invoke(
             cli,
             ["--config", str(temp_config), "logs", "--tail", "100", "--follow", "--agent", "coder"],
         )
-        
+
         assert result.exit_code == 0
         assert "Showing logs for coder agent(s)" in result.output

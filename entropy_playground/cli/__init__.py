@@ -11,4 +11,3 @@ Provides commands for:
 from .main import cli
 
 __all__ = ["cli"]
-

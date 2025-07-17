@@ -1,6 +1,5 @@
 """CLI-specific exceptions and error handling."""
 
-
 import click
 from rich.console import Console
 
@@ -48,7 +47,7 @@ def handle_errors(func):
             # These are already formatted
             raise
         except FileNotFoundError as e:
-            filename = getattr(e, 'filename', None) or str(e)
+            filename = getattr(e, "filename", None) or str(e)
             raise ConfigurationError(f"File not found: {filename}") from e
         except PermissionError as e:
             raise ConfigurationError(f"Permission denied: {e.filename}") from e
@@ -61,9 +60,7 @@ def handle_errors(func):
 
             # Show user-friendly message
             raise EntropyPlaygroundError(
-                f"An unexpected error occurred: {str(e)}\n"
-                "Run with --verbose for more details."
+                f"An unexpected error occurred: {str(e)}\n" "Run with --verbose for more details."
             ) from e
 
     return wrapper
-

@@ -6,10 +6,16 @@ import time
 from datetime import datetime
 from queue import Empty, Queue
 from threading import Event, Thread
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
-import boto3
-from botocore.exceptions import ClientError
+try:
+    import boto3
+    from botocore.exceptions import ClientError
+    HAS_BOTO3 = True
+except ImportError:
+    HAS_BOTO3 = False
+    boto3 = None
+    ClientError = Exception
 
 from entropy_playground.logging.logger import get_logger
 
@@ -34,6 +40,12 @@ class CloudWatchHandler:
             buffer_size: Number of logs to buffer before sending
             flush_interval: Seconds between automatic flushes
         """
+        if not HAS_BOTO3:
+            raise ImportError(
+                "boto3 is required for CloudWatch logging. "
+                "Install with: pip install entropy-playground[aws]"
+            )
+        
         self.logger = get_logger(__name__)
         self.log_group_name = log_group_name
         self.log_stream_name = log_stream_name or self._generate_stream_name()
@@ -124,8 +136,8 @@ class CloudWatchHandler:
 
                 # Send logs if buffer is full or flush interval reached
                 should_flush = (
-                    len(logs_to_send) >= self.buffer_size or
-                    (time.time() - last_flush) >= self.flush_interval
+                    len(logs_to_send) >= self.buffer_size
+                    or (time.time() - last_flush) >= self.flush_interval
                 )
 
                 if should_flush and logs_to_send:
@@ -166,10 +178,12 @@ class CloudWatchHandler:
             # Convert log to JSON string
             message = json.dumps(log, default=str)
 
-            log_events.append({
-                "timestamp": timestamp_ms,
-                "message": message,
-            })
+            log_events.append(
+                {
+                    "timestamp": timestamp_ms,
+                    "message": message,
+                }
+            )
 
         # Sort by timestamp (CloudWatch requirement)
         log_events.sort(key=lambda x: x["timestamp"])
@@ -261,7 +275,9 @@ class CloudWatchLogger:
             CloudWatch handler for the component
         """
         if component not in self.handlers:
-            stream_name = f"{self.log_stream_prefix}/{component}/{datetime.utcnow().strftime('%Y%m%d')}"
+            stream_name = (
+                f"{self.log_stream_prefix}/{component}/{datetime.utcnow().strftime('%Y%m%d')}"
+            )
             self.handlers[component] = CloudWatchHandler(
                 log_group_name=self.log_group_name,
                 log_stream_name=stream_name,

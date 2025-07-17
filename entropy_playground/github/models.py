@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, HttpUrl
 
 class IssueState(str, Enum):
     """Issue state enumeration."""
+
     OPEN = "open"
     CLOSED = "closed"
     ALL = "all"
@@ -18,6 +19,7 @@ class IssueState(str, Enum):
 
 class PullRequestState(str, Enum):
     """Pull request state enumeration."""
+
     OPEN = "open"
     CLOSED = "closed"
     ALL = "all"
@@ -25,6 +27,7 @@ class PullRequestState(str, Enum):
 
 class User(BaseModel):
     """GitHub user model."""
+
     login: str
     id: int
     avatar_url: HttpUrl
@@ -35,6 +38,7 @@ class User(BaseModel):
 
 class Label(BaseModel):
     """GitHub label model."""
+
     id: int
     name: str
     color: str
@@ -44,6 +48,7 @@ class Label(BaseModel):
 
 class Milestone(BaseModel):
     """GitHub milestone model."""
+
     id: int
     number: int
     title: str
@@ -57,6 +62,7 @@ class Milestone(BaseModel):
 
 class Repository(BaseModel):
     """GitHub repository model."""
+
     id: int
     name: str
     full_name: str
@@ -83,6 +89,7 @@ class Repository(BaseModel):
 
 class Issue(BaseModel):
     """GitHub issue model."""
+
     id: int
     number: int
     title: str
@@ -106,6 +113,7 @@ class Issue(BaseModel):
 
 class PullRequestBranch(BaseModel):
     """Pull request branch information."""
+
     label: str
     ref: str
     sha: str
@@ -115,6 +123,7 @@ class PullRequestBranch(BaseModel):
 
 class PullRequest(BaseModel):
     """GitHub pull request model."""
+
     id: int
     number: int
     title: str
@@ -155,6 +164,7 @@ class PullRequest(BaseModel):
 
 class Comment(BaseModel):
     """GitHub comment model."""
+
     id: int
     body: str
     user: User
@@ -167,6 +177,7 @@ class Comment(BaseModel):
 
 class Review(BaseModel):
     """Pull request review model."""
+
     id: int
     user: User
     body: str | None = None
@@ -180,6 +191,7 @@ class Review(BaseModel):
 
 class RateLimit(BaseModel):
     """GitHub rate limit information."""
+
     limit: int
     remaining: int
     reset: datetime
@@ -198,6 +210,7 @@ class RateLimit(BaseModel):
 
 class RateLimitInfo(BaseModel):
     """Complete rate limit information."""
+
     core: RateLimit
     search: RateLimit
     graphql: RateLimit | None = None
@@ -207,6 +220,7 @@ class RateLimitInfo(BaseModel):
 
 class WebhookEvent(BaseModel):
     """GitHub webhook event model."""
+
     action: str
     sender: User
     repository: Repository | None = None
@@ -227,8 +241,8 @@ class WebhookEvent(BaseModel):
 
 class GitHubError(BaseModel):
     """GitHub API error response."""
+
     message: str
     documentation_url: HttpUrl | None = None
     errors: list[dict[str, Any]] | None = None
     status: int | None = None
-

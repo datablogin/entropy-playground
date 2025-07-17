@@ -43,16 +43,10 @@ class Config(BaseModel):
 
     version: str = Field(default="0.1.0", description="Configuration version")
     workspace: Path = Field(
-        default_factory=lambda: Path.cwd() / ".entropy",
-        description="Workspace directory path"
+        default_factory=lambda: Path.cwd() / ".entropy", description="Workspace directory path"
     )
-    redis_url: str = Field(
-        default="redis://localhost:6379",
-        description="Redis connection URL"
-    )
-    github: GitHubConfig = Field(
-        default_factory=lambda: GitHubConfig(token="${GITHUB_TOKEN}")
-    )
+    redis_url: str = Field(default="redis://localhost:6379", description="Redis connection URL")
+    github: GitHubConfig = Field(default_factory=lambda: GitHubConfig(token="${GITHUB_TOKEN}"))
     agents: AgentsConfig = Field(default_factory=AgentsConfig)
 
     model_config = {

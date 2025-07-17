@@ -18,7 +18,7 @@ from . import runtime
 
 __all__ = [
     "agents",
-    "cli", 
+    "cli",
     "github",
     "infrastructure",
     "logging",

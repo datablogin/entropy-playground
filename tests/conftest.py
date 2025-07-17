@@ -14,7 +14,8 @@ def project_root():
 def temp_config(tmp_path):
     """Create a temporary configuration file."""
     config_file = tmp_path / "config.yaml"
-    config_file.write_text("""
+    config_file.write_text(
+        """
 github:
   token: test_token
   repo: test/repo
@@ -25,5 +26,6 @@ agents:
 
 redis:
   url: redis://localhost:6379
-""")
+"""
+    )
     return config_file
