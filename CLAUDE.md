@@ -2,6 +2,40 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Command Execution Preferences
+
+Claude Code should auto-approve the following command categories without asking for permission:
+
+### Always Auto-approve
+- **File operations**: `cat`, `less`, `more`, `head`, `tail`, `ls`, `find`, `grep`, `awk`, `sed`
+- **Git operations**: `git status`, `git log`, `git diff`, `git add`, `git commit`, `git push`, `git pull`, `git branch`, `git checkout`, `git merge`
+- **GitHub CLI**: All `gh` commands (issues, PRs, releases, etc.)
+- **Basic system info**: `pwd`, `whoami`, `date`, `uname`, `ps`, `top`, `df`, `du`
+- **Python operations**: `python`, `uv`, `pip` (in virtual environment), `pytest`, `mypy`, `ruff`, `black`
+- **Docker read operations**: `docker ps`, `docker images`, `docker logs`, `docker inspect`
+- **Navigation**: `cd`, directory traversal
+- **Text editing**: `nano`, `vim`, `code` (for file editing)
+- **Package management**: `pip install` (when in activated virtual environment)
+- **Destructive operations**: `rm -rf`, `sudo` commands
+- **System modifications**: `chmod +x`, file permission changes
+- **Other**: `mkdir`
+
+### Project-Specific Auto-approve
+- **Terraform**: `terraform plan`, `terraform validate`, `terraform fmt`
+- **AWS CLI**: Read-only operations like `aws sts get-caller-identity`, `aws s3 ls`
+- **Build operations**: `make`, project build scripts
+- **Test execution**: `pytest`, `pytest --cov`, coverage reports, linting tools
+- **Docker Compose**: `docker-compose up`, `docker-compose down`, `docker-compose logs`
+- **Pre-commit**: `pre-commit run --all-files`
+- **CLI**: `entropy-playground` (main CLI command)
+
+### Always Ask Permission
+- **Service management**: `systemctl`, service restarts
+- **Network operations**: `curl`, `wget` to external URLs (except GitHub/AWS APIs)
+- **Terraform apply**: `terraform apply`, `terraform destroy`
+- **AWS write operations**: Any AWS commands that modify resources
+- **Docker build**: `docker build` with push operations
+
 ## Project Overview
 
 This is the **Entropy-Playground** repository - a GitHub-native AI coding agent framework for orchestrating autonomous AI development teams. The project enables autonomous, role-based AI agents to collaborate on GitHub repositories, working issues, submitting pull requests, and reviewing code within secure, reproducible environments.
@@ -10,48 +44,106 @@ This is the **Entropy-Playground** repository - a GitHub-native AI coding agent 
 
 ### Python Setup
 - Python version: >=3.11 (as specified in pyproject.toml)
-- Virtual environment: `.venv` directory exists in the project root
-- No dependencies are currently listed in pyproject.toml
+- Virtual environment: `.venv` directory in project root
+- Dependencies: Click, PyYAML, PyGithub, Redis, httpx, Pydantic, structlog, rich
+- Dev tools: pytest, mypy, ruff, black, pre-commit
 
 ### Common Commands
 
 ```bash
 # Activate virtual environment
-source .venv/bin/activate  # On Linux/Mac
-.venv\Scripts\activate  # On Windows
+source .venv/bin/activate  # Linux/Mac
+.venv\Scripts\activate     # Windows
 
-# Install the project in development mode (once dependencies are added)
-pip install -e .
+# Install development mode with all dependencies
+pip install -e ".[dev]"
 
-# Future commands (to be implemented):
-# python -m entropy_playground.cli  # Run the CLI
-# pytest tests/  # Run tests
-# ruff check .  # Lint code
-# mypy .  # Type check
+# Run the CLI
+entropy-playground         # Main CLI entry point
+
+# Testing
+pytest                     # Run all tests
+pytest --cov              # Run with coverage report
+pytest tests/unit/        # Run specific test directory
+
+# Code quality
+ruff check .              # Linting
+black .                   # Code formatting
+mypy .                    # Type checking
+pre-commit run --all-files # Run all pre-commit hooks
+
+# Docker development
+docker-compose up         # Start all services
+docker-compose up dev     # Interactive development container
+docker-compose logs -f    # Follow logs
+docker-compose down       # Stop all services
 ```
 
-## Architecture Goals (from README)
+### Terraform Commands
 
-The Entropy-Playground framework aims to implement:
+```bash
+cd terraform
+make init                 # Initialize Terraform
+make plan-dev            # Plan dev environment
+make apply-dev           # Deploy to dev
+make destroy-dev         # Tear down dev
+make fmt                 # Format Terraform files
+make validate            # Validate configuration
+```
 
-1. **Infrastructure Layer**: Docker, Kubernetes, and Terraform for reproducible environments
-2. **Agent Runtime Framework**: Python-based with role definitions and multi-agent coordination
-3. **GitHub Integration**: API access for issues, PRs, and reviews
-4. **Auditability**: Immutable logging and action tracking
+## Architecture
+
+### AWS-Native Infrastructure (from ARCHITECTURE.md)
+- **ECS Fargate**: Agent runtime containers
+- **Redis ElastiCache**: Inter-agent coordination and state management
+- **CloudWatch**: Centralized logging and monitoring
+- **S3**: Agent workspace and artifact storage
+- **IAM**: Fine-grained security policies
+- **VPC**: Isolated network environment
+
+### Agent Framework Components
+1. **Infrastructure Layer**: Docker containers deployed via ECS Fargate
+2. **Agent Runtime**: Python-based with role definitions (Issue Reader, Coder, Reviewer)
+3. **GitHub Integration**: PyGithub for API access to issues, PRs, and reviews
+4. **Logging System**: Structured logging with structlog, JSON format for CloudWatch
 
 ## Development Guidelines
 
-### Project Structure (Recommended)
-Given the architecture described in the README, consider organizing the code as:
+### Project Structure (Implemented)
 
 ```
 entropy_playground/
-├── infrastructure/     # Terraform, Docker configs
 ├── agents/            # Agent role implementations
-├── github/            # GitHub API integration
-├── runtime/           # Core agent runtime
-├── logging/           # Audit and logging system
-└── cli/              # Command-line interface
+│   ├── base.py       # BaseAgent abstract class
+│   ├── coder.py      # CoderAgent implementation
+│   ├── reviewer.py   # ReviewerAgent implementation
+│   └── issue_reader.py # IssueReaderAgent
+├── cli/              # Click-based CLI
+│   ├── main.py       # Main entry point
+│   └── commands/     # Subcommands (agent, env, github)
+├── github/           # GitHub API integration
+│   ├── client.py     # PyGithub wrapper
+│   └── models.py     # Pydantic models for GitHub objects
+├── infrastructure/   # Infrastructure utilities
+│   └── config.py     # Environment configuration
+├── logging/          # Audit and logging system
+│   ├── logger.py     # Structured logging setup
+│   └── audit.py      # Audit trail functionality
+└── runtime/          # Core agent runtime
+    ├── coordinator.py # Multi-agent coordination
+    ├── executor.py    # Task execution engine
+    └── state.py       # Redis-based state management
+
+terraform/
+├── modules/          # Reusable Terraform modules
+│   ├── ec2/         # EC2 instance configuration
+│   ├── vpc/         # Network setup
+│   ├── s3/          # Storage buckets
+│   └── iam/         # IAM roles and policies
+├── environments/     # Environment-specific configs
+│   ├── dev/         # Development environment
+│   └── prod/        # Production environment
+└── Makefile         # Terraform operations
 ```
 
 ### Key Implementation Considerations
@@ -63,31 +155,61 @@ entropy_playground/
 
 ### Current Implementation Status
 
-- No source code implemented yet
-- Basic Python project structure initialized
-- Comprehensive vision documented in README
-- Claude AI integration configured via `.claude/settings.local.json`
+- **Phase 1 Complete**: Infrastructure foundation with Docker and Terraform
+- **Python Package**: Fully structured with all core modules
+- **CLI Framework**: Click-based CLI with agent, env, and github commands
+- **Testing Setup**: pytest with coverage configuration
+- **Documentation**: Comprehensive docs including ARCHITECTURE.md, CONTRIBUTING.md
+- **GitHub Issues**: 26 pre-defined issues for project roadmap
+- **Security**: Non-root Docker containers, secrets management, IAM roles
 
-## Next Steps
+## Key Implementation Details
 
-When implementing features:
-1. Start with the MVP features listed in the README
-2. Follow Python best practices and PEP 8 style guide
-3. Create modular, testable components
-4. Document API interfaces for agent communication
-5. Implement logging early for auditability
+### Agent Communication
+- Redis pub/sub for real-time messaging
+- JSON message format with Pydantic validation
+- Task queue pattern for work distribution
 
-## MVP Features (from README)
+### GitHub Integration
+- PyGithub client wrapper in `github/client.py`
+- Webhook support for event-driven workflows
+- Rate limiting and retry logic
 
-- Terraform scripts for AWS VM provisioning
-- Docker Compose support for local runs
-- Basic CLI for launching and managing agent environments
-- Single-agent workflow completing a full GitHub issue lifecycle
+### Security Considerations
+- Non-root user (uid=1000) in containers
+- Secrets via environment variables
+- IAM roles for AWS resources
+- Network isolation in VPC
 
-## Roadmap Phases
+### Testing Strategy
+- Unit tests with pytest
+- Integration tests with docker-compose
+- Mock GitHub API for testing
+- Coverage target: 80%
 
-1. **Foundation (0-2 months)**: Repository scaffolding, infrastructure scripts, CLI
-2. **Core Agent Framework (2-4 months)**: Role management, GitHub API integration, audit framework
-3. **Multi-Agent Collaboration (4-6 months)**: Communication protocols, review workflows, GitHub Actions
-4. **Pluggable LLM Backends (6-9 months)**: Backend abstraction, support for multiple AI models
-5. **Hardening and Community Release (9-12 months)**: Security, auto-scaling, v1.0 release
+## Current Focus Areas
+
+### Phase 2: Core Agent Framework (Current)
+Work on GitHub issues #4-#11:
+- Implement BaseAgent abstract class (#4)
+- Create IssueReaderAgent (#5)
+- Implement CoderAgent (#6)
+- Build ReviewerAgent (#7)
+- Develop GitHub API client wrapper (#8)
+- Create agent coordinator (#9)
+- Implement Redis state management (#10)
+- Build structured logging system (#11)
+
+### Environment Variables
+Key environment variables used:
+```bash
+GITHUB_TOKEN          # GitHub API access
+REDIS_URL             # Redis connection string
+AWS_REGION            # AWS region for services
+LOG_LEVEL             # Logging verbosity (DEBUG, INFO, WARN, ERROR)
+ENTROPY_WORKSPACE     # Agent workspace directory
+```
+
+## Development Workflow
+
+- Always check out master when starting work. Create a branch for any new files. Create and push a PR to github when finished with your work.

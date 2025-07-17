@@ -351,4 +351,123 @@ To create these issues in GitHub:
 
 3. Or use the GitHub web interface to manually create each issue with the specified labels.
 
-Each issue should be assigned to the appropriate milestone based on the phase timeline.
+## 📋 GitHub Issues for Phase 4 & 5 (Markdown Format)
+
+### Phase 4
+
+#### Issue 18: Pluggable LLM Backend Abstraction
+
+**Description:**
+Create an abstract interface for supporting multiple AI code assistants (Claude, Codex, Open Source LLMs).
+
+**Acceptance Criteria:**
+
+* Defined interface documented.
+* Example implementation for Claude Code.
+
+---
+
+#### Issue 19: Codex API Client Module
+
+**Description:**
+Implement Python module for OpenAI Codex API integration (fallback or second backend).
+
+**Acceptance Criteria:**
+
+* Unit test verifies successful completion request.
+
+---
+
+#### Issue 20: Open Source Model Adapter
+
+**Description:**
+Provide adapter for running OSS LLM locally (e.g., Code Llama or Starcoder).
+
+**Acceptance Criteria:**
+
+* Basic example working with OSS model.
+
+---
+
+#### Issue 21: Backend Selection CLI/Config
+
+**Description:**
+Allow agents to specify backend at runtime:
+
+* CLI option and/or config file option.
+
+**Acceptance Criteria:**
+
+* Agent can switch between Claude and other backends without code change.
+
+---
+
+#### Issue 22: Web UI for Monitoring Agents
+
+**Description:**
+Initial web UI (basic HTML/JS) showing agent state, task progress, logs.
+
+**Acceptance Criteria:**
+
+* Web UI displays at least running agent names and claimed issues.
+
+---
+
+### Phase 5
+
+#### Issue 23: Secure Sandboxed Execution
+
+**Description:**
+Research and implement secure sandboxing for agents running generated code:
+
+* Example: Docker-in-Docker or Firecracker microVMs.
+
+**Acceptance Criteria:**
+
+* Demo showing sandbox preventing unauthorized host access.
+
+---
+
+#### Issue 24: Auto-Scaling Infrastructure
+
+**Description:**
+Configure auto-scaling ECS tasks based on task queue depth or other metric.
+
+**Acceptance Criteria:**
+
+* ECS scales up/down automatically.
+
+---
+
+#### Issue 25: Community Governance Setup
+
+**Description:**
+Draft governance documentation:
+
+* CONTRIBUTING.md updates
+* CODE\_OF\_CONDUCT.md
+* Maintainer guide.
+
+**Acceptance Criteria:**
+
+* Docs published in repo.
+
+---
+
+#### Issue 26: v1.0 Milestone Planning
+
+**Description:**
+Create v1.0 milestone with checklist:
+
+* Feature completeness
+* Documentation
+* Example deployments
+* Testing coverage goals.
+
+**Acceptance Criteria:**
+
+* Milestone created and issues tagged.
+
+---
+
+
