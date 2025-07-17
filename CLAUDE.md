@@ -9,7 +9,8 @@ Claude Code should auto-approve the following command categories without asking 
 ### Always Auto-approve
 
 - **File operations**: `cat`, `less`, `more`, `head`, `tail`, `ls`, `find`, `grep`, `awk`, `sed`
-- **Git operations**: `git status`, `git log`, `git diff`, `git add`, `git commit`, `git push`, `git pull`, `git branch`, `git checkout`, `git merge`
+- **Git operations**: `git status`, `git log`, `git diff`, `git add`, `git commit`, `git push`, `git pull`,
+  `git branch`, `git checkout`, `git merge`
 - **GitHub CLI**: All `gh` commands (issues, PRs, releases, etc.)
 - **Basic system info**: `pwd`, `whoami`, `date`, `uname`, `ps`, `top`, `df`, `du`
 - **Python operations**: `python`, `uv`, `pip` (in virtual environment), `pytest`, `mypy`, `ruff`, `black`
@@ -41,7 +42,9 @@ Claude Code should auto-approve the following command categories without asking 
 
 ## Project Overview
 
-This is the **Entropy-Playground** repository - a GitHub-native AI coding agent framework for orchestrating autonomous AI development teams. The project enables autonomous, role-based AI agents to collaborate on GitHub repositories, working issues, submitting pull requests, and reviewing code within secure, reproducible environments.
+This is the **Entropy-Playground** repository - a GitHub-native AI coding agent framework for orchestrating
+autonomous AI development teams. The project enables autonomous, role-based AI agents to collaborate on GitHub
+repositories, working issues, submitting pull requests, and reviewing code within secure, reproducible environments.
 
 ## Development Environment
 
@@ -117,7 +120,7 @@ make validate            # Validate configuration
 
 ### Project Structure (Implemented)
 
-```
+```text
 entropy_playground/
 ├── agents/            # Agent role implementations
 │   ├── base.py       # BaseAgent abstract class
@@ -226,4 +229,5 @@ ENTROPY_WORKSPACE     # Agent workspace directory
 
 ## Development Workflow
 
-- Always check out master when starting work. Create a branch for any new files. Create and push a PR to github when finished with your work.
+- Always check out master when starting work. Create a branch for any new files.
+  Create and push a PR to github when finished with your work.

@@ -39,6 +39,6 @@ Steps to reproduce the behavior:
 
 ## Logs
 <!-- Please include relevant logs, error messages, or stack traces -->
-```
+```text
 <paste logs here>
 ```

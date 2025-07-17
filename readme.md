@@ -2,7 +2,9 @@
 
 ## 🚀 Overview
 
-**Entropy-Playground** is an open-source framework for orchestrating AI coding assistants inside secure, reproducible virtual environments. It enables autonomous, role-based AI agents to collaborate on GitHub repositories, working issues, submitting pull requests, and reviewing code — all while running in ephemeral cloud or local infrastructure.
+**Entropy-Playground** is an open-source framework for orchestrating AI coding assistants inside secure, reproducible
+virtual environments. It enables autonomous, role-based AI agents to collaborate on GitHub repositories, working
+issues, submitting pull requests, and reviewing code — all while running in ephemeral cloud or local infrastructure.
 
 Entropy-Playground is designed to:
 

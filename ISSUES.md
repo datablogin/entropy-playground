@@ -1,6 +1,7 @@
 # Entropy-Playground Initial Issues
 
-This file contains the initial issues to be created in GitHub for the Entropy-Playground project. Each issue is formatted with title, labels, and description.
+This file contains the initial issues to be created in GitHub for the Entropy-Playground project.
+Each issue is formatted with title, labels, and description.
 
 ## Phase 1: Foundation (0-2 months)
 

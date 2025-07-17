@@ -21,7 +21,7 @@ The infrastructure consists of:
 
 ## Directory Structure
 
-```
+```text
 terraform/
 ├── main.tf                 # Main Terraform configuration
 ├── variables.tf            # Variable definitions

@@ -1,10 +1,12 @@
 # Contributing to Entropy-Playground
 
-Thank you for your interest in contributing to Entropy-Playground! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to Entropy-Playground! This document provides guidelines and
+instructions for contributing to the project.
 
 ## Code of Conduct
 
-By participating in this project, you agree to abide by our Code of Conduct. We are committed to providing a welcoming and inspiring community for all. Please be respectful, inclusive, and considerate in all interactions.
+By participating in this project, you agree to abide by our Code of Conduct. We are committed to providing a
+welcoming and inspiring community for all. Please be respectful, inclusive, and considerate in all interactions.
 
 ## How to Contribute
 
@@ -38,14 +40,14 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
 
 3. **Set Up Development Environment**
 
-#### Prerequisites
+   #### Prerequisites
 
    - Python 3.11 or higher
    - Docker and Docker Compose (for integration testing)
    - AWS CLI (for infrastructure development)
    - Terraform (for infrastructure as code)
 
-#### Setup Steps
+   #### Setup Steps
 
    ```bash
    # Create virtual environment
@@ -65,7 +67,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
    pytest tests/unit/
    ```
 
-#### Environment Variables
+   #### Environment Variables
 
    Create a `.env` file for local development (never commit this):
 
@@ -203,7 +205,7 @@ Each group separated by a blank line, sorted alphabetically.
 
 #### Test Structure
 
-```
+```text
 tests/
 ├── unit/           # Fast, isolated unit tests
 ├── integration/    # Tests with external dependencies
@@ -335,7 +337,7 @@ def analyze_code_changes(pr_number: int,
 - **Atomic Commits**: One logical change per commit
 - **Commit Messages**: Follow [Conventional Commits](https://www.conventionalcommits.org/)
 
-  ```
+  ```text
   <type>(<scope>): <subject>
 
   <body>
