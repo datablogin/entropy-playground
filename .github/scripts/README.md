@@ -5,25 +5,28 @@ This directory contains scripts to help set up the Entropy-Playground repository
 ## Prerequisites
 
 1. **Python 3.11+** with the following packages:
+
    ```bash
    pip install PyGithub pyyaml python-dotenv
    ```
 
 2. **GitHub CLI** (`gh`) installed and authenticated:
+
    ```bash
    # Install GitHub CLI (varies by OS)
    # macOS: brew install gh
    # Linux: See https://github.com/cli/cli#installation
-   
+
    # Authenticate
    gh auth login
    ```
 
 3. **Environment Setup** - Create a `.env` file in the project root:
+
    ```bash
    # Copy the example file
    cp .env.example .env
-   
+
    # Edit .env and add your GitHub token and repo
    # GITHUB_TOKEN=your_github_token
    # GITHUB_REPO=owner/repo
@@ -36,6 +39,7 @@ This directory contains scripts to help set up the Entropy-Playground repository
 Sets up all GitHub issue labels defined in `.github/labels.yml`.
 
 **Usage:**
+
 ```bash
 cd .github/scripts
 
@@ -47,6 +51,7 @@ cd .github/scripts
 ```
 
 This will:
+
 - Create all new labels defined in `labels.yml`
 - Update existing labels if their color or description has changed
 - Leave other labels untouched
@@ -56,6 +61,7 @@ This will:
 Creates GitHub issues from the `ISSUES.md` file.
 
 **Usage:**
+
 ```bash
 cd .github/scripts
 
@@ -67,6 +73,7 @@ python create-issues.py owner/repo
 ```
 
 This will:
+
 - Parse all issues from `ISSUES.md`
 - Prompt for confirmation before creating
 - Create each issue with the specified labels
@@ -77,22 +84,25 @@ This will:
 1. First, create the repository on GitHub
 
 2. Set up environment:
+
    ```bash
    # Copy and edit .env file
    cp .env.example .env
    # Edit .env with your GITHUB_TOKEN and GITHUB_REPO
-   
+
    # Authenticate GitHub CLI
    gh auth login
    ```
 
 3. Create labels:
+
    ```bash
    cd .github/scripts
    ./setup-labels.sh
    ```
 
 4. Create issues:
+
    ```bash
    python create-issues.py
    ```

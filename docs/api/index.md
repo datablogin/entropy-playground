@@ -5,21 +5,27 @@ This section contains detailed API documentation for all Entropy-Playground modu
 ## Core Modules
 
 ### [entropy_playground.agents](agents.md)
+
 Agent implementations and base classes.
 
 ### [entropy_playground.cli](cli.md)
+
 Command-line interface and commands.
 
 ### [entropy_playground.github](github.md)
+
 GitHub API integration and utilities.
 
 ### [entropy_playground.infrastructure](infrastructure.md)
+
 Infrastructure management and deployment.
 
 ### [entropy_playground.logging](logging.md)
+
 Logging, audit, and metrics functionality.
 
 ### [entropy_playground.runtime](runtime.md)
+
 Core runtime, scheduling, and lifecycle management.
 
 ## Quick Reference

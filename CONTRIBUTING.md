@@ -24,45 +24,51 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
 ### Contributing Code
 
 1. **Fork the Repository**
+
    ```bash
    gh repo fork datablogin/entropy-playground
    ```
 
 2. **Clone Your Fork**
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/entropy-playground.git
    cd entropy-playground
    ```
 
 3. **Set Up Development Environment**
-   
-   #### Prerequisites
+
+#### Prerequisites
+
    - Python 3.11 or higher
    - Docker and Docker Compose (for integration testing)
    - AWS CLI (for infrastructure development)
    - Terraform (for infrastructure as code)
-   
-   #### Setup Steps
+
+#### Setup Steps
+
    ```bash
    # Create virtual environment
    uv venv --python 3.11
    source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   
+
    # Install development dependencies
    uv pip install -e ".[dev]"
-   
+
    # Install pre-commit hooks
    pre-commit install
-   
+
    # Verify installation
    entropy-playground --version
-   
+
    # Run initial tests to ensure setup is correct
    pytest tests/unit/
    ```
-   
-   #### Environment Variables
+
+#### Environment Variables
+
    Create a `.env` file for local development (never commit this):
+
    ```bash
    GITHUB_TOKEN=your_github_token
    REDIS_URL=redis://localhost:6379
@@ -72,6 +78,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
    ```
 
 4. **Create a Feature Branch**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
@@ -83,10 +90,11 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
    - Follow the project's coding standards
 
 6. **Run Tests and Linting**
+
    ```bash
    # Run tests
    pytest
-   
+
    # Run linting
    ruff check .
    black --check .
@@ -94,6 +102,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
    ```
 
 7. **Commit Your Changes**
+
    ```bash
    git add .
    git commit -m "feat: add amazing new feature"
@@ -108,6 +117,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
    - `chore:` for maintenance
 
 8. **Push and Create Pull Request**
+
    ```bash
    git push origin feature/your-feature-name
    gh pr create
@@ -118,6 +128,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
 ### Code Style
 
 #### Python Standards
+
 - Follow [PEP 8](https://pep8.org/) with these specifications:
   - Maximum line length: 100 characters
   - Use 4 spaces for indentation (no tabs)
@@ -125,25 +136,29 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
   - One blank line between method definitions
 
 #### Type Hints
+
 - Required for all function signatures
 - Use `from typing import` for complex types
 - Example:
+
   ```python
   from typing import List, Optional, Dict, Any
-  
-  def process_issues(issues: List[Dict[str, Any]], 
+
+  def process_issues(issues: List[Dict[str, Any]],
                     assignee: Optional[str] = None) -> List[Issue]:
       """Process GitHub issues with optional assignee filter."""
       pass
   ```
 
 #### Naming Conventions
+
 - Classes: `PascalCase` (e.g., `CoderAgent`, `GitHubClient`)
 - Functions/variables: `snake_case` (e.g., `get_issue_details`, `max_retries`)
 - Constants: `UPPER_SNAKE_CASE` (e.g., `DEFAULT_TIMEOUT`, `MAX_WORKERS`)
 - Private methods: prefix with underscore (e.g., `_internal_method`)
 
 #### Docstrings
+
 - Use Google-style docstrings for all public functions/classes
 - Include:
   - Brief description
@@ -153,6 +168,7 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
   - Examples for complex functions
 
 #### Import Order
+
 1. Standard library imports
 2. Third-party imports
 3. Local application imports
@@ -160,16 +176,18 @@ By participating in this project, you agree to abide by our Code of Conduct. We 
 Each group separated by a blank line, sorted alphabetically.
 
 #### Error Handling
+
 - Use specific exceptions, not bare `except:`
 - Create custom exceptions in `entropy_playground.exceptions`
 - Always log exceptions with appropriate context
 - Example:
+
   ```python
   try:
       result = github_client.get_issue(issue_id)
   except GitHubAPIError as e:
-      logger.error("Failed to fetch issue", 
-                  issue_id=issue_id, 
+      logger.error("Failed to fetch issue",
+                  issue_id=issue_id,
                   error=str(e))
       raise
   ```
@@ -177,12 +195,14 @@ Each group separated by a blank line, sorted alphabetically.
 ### Testing
 
 #### Test Requirements
+
 - **Coverage**: Maintain minimum 80% code coverage
 - **New Features**: Must include comprehensive unit tests
 - **Bug Fixes**: Must include regression tests
 - **Integration Tests**: Required for external service interactions
 
 #### Test Structure
+
 ```
 tests/
 ├── unit/           # Fast, isolated unit tests
@@ -192,12 +212,14 @@ tests/
 ```
 
 #### Writing Tests
+
 - Use descriptive test names: `test_<what>_<condition>_<expected_result>`
 - One assertion per test when possible
 - Use pytest fixtures for setup/teardown
 - Mock external dependencies (GitHub API, Redis, AWS)
 
 #### Test Examples
+
 ```python
 import pytest
 from unittest.mock import Mock, patch
@@ -207,22 +229,23 @@ class TestCoderAgent:
     def mock_github_client(self):
         """Fixture for mocked GitHub client."""
         return Mock(spec=GitHubClient)
-    
+
     def test_create_pull_request_success(self, mock_github_client):
         """Test successful PR creation with valid issue."""
         # Arrange
         agent = CoderAgent(github_client=mock_github_client)
         mock_github_client.get_issue.return_value = Mock(state="open")
-        
+
         # Act
         pr = agent.create_pull_request(issue_id=123)
-        
+
         # Assert
         assert pr.title.startswith("Fix #123")
         mock_github_client.create_pull_request.assert_called_once()
 ```
 
 #### Running Tests
+
 ```bash
 # Run all tests
 pytest
@@ -241,6 +264,7 @@ pytest -m "not slow"
 ```
 
 #### Performance Testing
+
 - Mark slow tests with `@pytest.mark.slow`
 - Set timeouts for long-running tests
 - Profile critical paths
@@ -248,6 +272,7 @@ pytest -m "not slow"
 ### Documentation
 
 #### Documentation Requirements
+
 - **Docstrings**: Required for all public modules, classes, and functions
 - **Type Hints**: Required for better IDE support and documentation
 - **README Updates**: Update when adding major features
@@ -255,35 +280,37 @@ pytest -m "not slow"
 - **API Docs**: Document all public APIs with examples
 
 #### Documentation Style
+
 - Use clear, concise language
 - Include code examples for complex features
 - Explain the "why" not just the "what"
 - Keep examples up-to-date and tested
 
 #### Example Documentation
+
 ```python
-def analyze_code_changes(pr_number: int, 
+def analyze_code_changes(pr_number: int,
                         base_branch: str = "main") -> CodeAnalysis:
     """Analyze code changes in a pull request.
-    
+
     Performs static analysis, security checks, and style validation
     on all changed files in the specified pull request.
-    
+
     Args:
         pr_number: The GitHub pull request number to analyze.
         base_branch: The base branch to compare against. Defaults to "main".
-    
+
     Returns:
         CodeAnalysis: Analysis results including:
             - security_issues: List of potential security vulnerabilities
             - style_violations: List of code style issues
             - complexity_metrics: Code complexity measurements
             - test_coverage: Coverage delta for changed lines
-    
+
     Raises:
         GitHubAPIError: If the PR cannot be accessed.
         AnalysisError: If code analysis fails.
-    
+
     Example:
         >>> analysis = analyze_code_changes(pr_number=456)
         >>> if analysis.security_issues:
@@ -297,27 +324,32 @@ def analyze_code_changes(pr_number: int,
 ### Git Workflow
 
 #### Branch Naming
+
 - Features: `feature/issue-<number>-<brief-description>`
 - Bugfixes: `fix/issue-<number>-<brief-description>`
 - Hotfixes: `hotfix/<brief-description>`
 - Documentation: `docs/<brief-description>`
 
 #### Commit Guidelines
+
 - **Atomic Commits**: One logical change per commit
 - **Commit Messages**: Follow [Conventional Commits](https://www.conventionalcommits.org/)
+
   ```
   <type>(<scope>): <subject>
-  
+
   <body>
-  
+
   <footer>
   ```
+
 - **Types**: feat, fix, docs, style, refactor, test, chore
 - **Scope**: agent, github, infra, logging, cli, etc.
 - **Subject**: Imperative mood, no period, <50 chars
 - **Body**: Explain what and why, not how
 
-#### Examples:
+#### Examples
+
 ```bash
 # Good commit messages
 git commit -m "feat(agent): add retry logic for GitHub API calls"
@@ -335,6 +367,7 @@ Closes #123"
 ```
 
 #### Pre-Push Checklist
+
 - [ ] All tests pass locally
 - [ ] Code follows style guidelines
 - [ ] Documentation is updated
@@ -344,6 +377,7 @@ Closes #123"
 ### Security Considerations
 
 #### Secure Coding Practices
+
 - **Never commit secrets**: Use environment variables for sensitive data
 - **Input validation**: Validate all external inputs
 - **Dependency security**: Keep dependencies updated
@@ -351,6 +385,7 @@ Closes #123"
 - **Command injection**: Avoid shell=True, use subprocess with lists
 
 #### Security Checklist
+
 - [ ] No hardcoded credentials or API keys
 - [ ] All user inputs are validated and sanitized
 - [ ] Error messages don't expose sensitive information
@@ -359,6 +394,7 @@ Closes #123"
 - [ ] Dependencies are from trusted sources
 
 #### Handling Secrets
+
 ```python
 # BAD - Never do this
 GITHUB_TOKEN = "ghp_xxxxxxxxxxxxxxxxxxxx"
@@ -375,6 +411,7 @@ if not GITHUB_TOKEN:
 ### Before Creating a PR
 
 1. **Run Full Test Suite**
+
    ```bash
    # Run all tests and checks
    pytest --cov=entropy_playground
@@ -402,24 +439,25 @@ if not GITHUB_TOKEN:
    - Example: `feat: add retry logic for GitHub API calls (#123)`
 
 2. **PR Description Template**:
+
    ```markdown
    ## Description
    Brief description of changes
-   
+
    ## Related Issue
    Fixes #<issue-number>
-   
+
    ## Type of Change
    - [ ] Bug fix
    - [ ] New feature
    - [ ] Breaking change
    - [ ] Documentation update
-   
+
    ## Testing
    - [ ] Unit tests pass
    - [ ] Integration tests pass
    - [ ] Manual testing completed
-   
+
    ## Checklist
    - [ ] Code follows project style guidelines
    - [ ] Self-review completed
@@ -451,6 +489,7 @@ if not GITHUB_TOKEN:
 ## Recognition
 
 Contributors will be recognized in:
+
 - The project README
 - Release notes
 - Annual contributor reports

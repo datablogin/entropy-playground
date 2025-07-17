@@ -7,6 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 Claude Code should auto-approve the following command categories without asking for permission:
 
 ### Always Auto-approve
+
 - **File operations**: `cat`, `less`, `more`, `head`, `tail`, `ls`, `find`, `grep`, `awk`, `sed`
 - **Git operations**: `git status`, `git log`, `git diff`, `git add`, `git commit`, `git push`, `git pull`, `git branch`, `git checkout`, `git merge`
 - **GitHub CLI**: All `gh` commands (issues, PRs, releases, etc.)
@@ -21,6 +22,7 @@ Claude Code should auto-approve the following command categories without asking 
 - **Other**: `mkdir`
 
 ### Project-Specific Auto-approve
+
 - **Terraform**: `terraform plan`, `terraform validate`, `terraform fmt`
 - **AWS CLI**: Read-only operations like `aws sts get-caller-identity`, `aws s3 ls`
 - **Build operations**: `make`, project build scripts
@@ -30,6 +32,7 @@ Claude Code should auto-approve the following command categories without asking 
 - **CLI**: `entropy-playground` (main CLI command)
 
 ### Always Ask Permission
+
 - **Service management**: `systemctl`, service restarts
 - **Network operations**: `curl`, `wget` to external URLs (except GitHub/AWS APIs)
 - **Terraform apply**: `terraform apply`, `terraform destroy`
@@ -43,6 +46,7 @@ This is the **Entropy-Playground** repository - a GitHub-native AI coding agent 
 ## Development Environment
 
 ### Python Setup
+
 - Python version: >=3.11 (as specified in pyproject.toml)
 - Virtual environment: `.venv` directory in project root
 - Dependencies: Click, PyYAML, PyGithub, Redis, httpx, Pydantic, structlog, rich
@@ -94,6 +98,7 @@ make validate            # Validate configuration
 ## Architecture
 
 ### AWS-Native Infrastructure (from ARCHITECTURE.md)
+
 - **ECS Fargate**: Agent runtime containers
 - **Redis ElastiCache**: Inter-agent coordination and state management
 - **CloudWatch**: Centralized logging and monitoring
@@ -102,6 +107,7 @@ make validate            # Validate configuration
 - **VPC**: Isolated network environment
 
 ### Agent Framework Components
+
 1. **Infrastructure Layer**: Docker containers deployed via ECS Fargate
 2. **Agent Runtime**: Python-based with role definitions (Issue Reader, Coder, Reviewer)
 3. **GitHub Integration**: PyGithub for API access to issues, PRs, and reviews
@@ -166,22 +172,26 @@ terraform/
 ## Key Implementation Details
 
 ### Agent Communication
+
 - Redis pub/sub for real-time messaging
 - JSON message format with Pydantic validation
 - Task queue pattern for work distribution
 
 ### GitHub Integration
+
 - PyGithub client wrapper in `github/client.py`
 - Webhook support for event-driven workflows
 - Rate limiting and retry logic
 
 ### Security Considerations
+
 - Non-root user (uid=1000) in containers
 - Secrets via environment variables
 - IAM roles for AWS resources
 - Network isolation in VPC
 
 ### Testing Strategy
+
 - Unit tests with pytest
 - Integration tests with docker-compose
 - Mock GitHub API for testing
@@ -190,7 +200,9 @@ terraform/
 ## Current Focus Areas
 
 ### Phase 2: Core Agent Framework (Current)
+
 Work on GitHub issues #4-#11:
+
 - Implement BaseAgent abstract class (#4)
 - Create IssueReaderAgent (#5)
 - Implement CoderAgent (#6)
@@ -201,7 +213,9 @@ Work on GitHub issues #4-#11:
 - Build structured logging system (#11)
 
 ### Environment Variables
+
 Key environment variables used:
+
 ```bash
 GITHUB_TOKEN          # GitHub API access
 REDIS_URL             # Redis connection string

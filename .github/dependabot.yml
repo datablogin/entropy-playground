@@ -19,7 +19,7 @@ updates:
       # Add any dependencies you want to pin/ignore
       # - dependency-name: "dependency-name"
       #   versions: ["x.x.x"]
-  
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
@@ -35,7 +35,7 @@ updates:
     commit-message:
       prefix: "chore"
       include: "scope"
-  
+
   # Docker dependencies
   - package-ecosystem: "docker"
     directory: "/"

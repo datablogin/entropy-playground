@@ -16,6 +16,7 @@ entropy_playground/
 ```
 
 Key concepts:
+
 - **BaseAgent**: Abstract base class for all agents
 - **AgentRegistry**: Manages available agent types
 - **TaskScheduler**: Coordinates agent activities
@@ -67,6 +68,7 @@ Each agent follows a standard lifecycle:
 ## Communication Patterns
 
 Agents communicate through:
+
 - **Redis PubSub**: Real-time event notifications
 - **Shared State**: Redis-backed state management
 - **GitHub API**: Coordination through issues and PRs

@@ -11,11 +11,12 @@ assignees: ''
 <!-- A clear and concise description of what the bug is -->
 
 ## To Reproduce
+
 Steps to reproduce the behavior:
-1. 
-2. 
-3. 
-4. 
+1.
+2.
+3.
+4.
 
 ## Expected Behavior
 <!-- A clear and concise description of what you expected to happen -->
@@ -27,6 +28,7 @@ Steps to reproduce the behavior:
 <!-- If applicable, add screenshots to help explain your problem -->
 
 ## Environment
+
 - OS: [e.g., Ubuntu 22.04, Windows 11, macOS 13]
 - Python version: [e.g., 3.11.0]
 - Entropy-Playground version: [e.g., 0.1.0 or commit hash]

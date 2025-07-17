@@ -96,12 +96,14 @@ See `variables.tf` for complete list.
 ## Cost Optimization
 
 ### Development Environment
+
 - Single NAT Gateway to reduce costs
 - Smaller instance types (t3.small)
 - Shorter S3 lifecycle policies
 - Auto-shutdown tags for non-business hours
 
 ### Production Environment
+
 - NAT Gateway per AZ for high availability
 - Larger instance types for better performance
 - Standard S3 lifecycle policies

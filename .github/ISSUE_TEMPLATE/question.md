@@ -20,6 +20,7 @@ assignees: ''
 <!-- Link to any documentation you've already consulted -->
 
 ## Environment (if relevant)
+
 - OS: [e.g., Ubuntu 22.04]
 - Python version: [e.g., 3.11.0]
 - Entropy-Playground version: [e.g., 0.1.0]
