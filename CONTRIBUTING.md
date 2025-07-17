@@ -40,14 +40,14 @@ welcoming and inspiring community for all. Please be respectful, inclusive, and 
 
 3. **Set Up Development Environment**
 
-   #### Prerequisites
+#### Prerequisites
 
-   - Python 3.11 or higher
-   - Docker and Docker Compose (for integration testing)
-   - AWS CLI (for infrastructure development)
-   - Terraform (for infrastructure as code)
+- Python 3.11 or higher
+- Docker and Docker Compose (for integration testing)
+- AWS CLI (for infrastructure development)
+- Terraform (for infrastructure as code)
 
-   #### Setup Steps
+#### Setup Steps
 
    ```bash
    # Create virtual environment
@@ -67,7 +67,7 @@ welcoming and inspiring community for all. Please be respectful, inclusive, and 
    pytest tests/unit/
    ```
 
-   #### Environment Variables
+#### Environment Variables
 
    Create a `.env` file for local development (never commit this):
 
@@ -79,19 +79,19 @@ welcoming and inspiring community for all. Please be respectful, inclusive, and 
    ENTROPY_WORKSPACE=/tmp/entropy-workspace
    ```
 
-4. **Create a Feature Branch**
+1. **Create a Feature Branch**
 
    ```bash
    git checkout -b feature/your-feature-name
    ```
 
-5. **Make Your Changes**
+2. **Make Your Changes**
    - Write clean, readable code
    - Add tests for new functionality
    - Update documentation as needed
    - Follow the project's coding standards
 
-6. **Run Tests and Linting**
+3. **Run Tests and Linting**
 
    ```bash
    # Run tests
@@ -103,7 +103,7 @@ welcoming and inspiring community for all. Please be respectful, inclusive, and 
    mypy .
    ```
 
-7. **Commit Your Changes**
+4. **Commit Your Changes**
 
    ```bash
    git add .
@@ -118,7 +118,7 @@ welcoming and inspiring community for all. Please be respectful, inclusive, and 
    - `refactor:` for refactoring
    - `chore:` for maintenance
 
-8. **Push and Create Pull Request**
+5. **Push and Create Pull Request**
 
    ```bash
    git push origin feature/your-feature-name
