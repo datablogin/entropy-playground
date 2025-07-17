@@ -37,6 +37,7 @@ try:
         configure_cloudwatch,
         get_cloudwatch_logger,
     )
+
     HAS_CLOUDWATCH = True
 except ImportError:
     HAS_CLOUDWATCH = False
@@ -66,9 +67,11 @@ __all__ = [
 
 # Add CloudWatch exports if available
 if HAS_CLOUDWATCH:
-    __all__.extend([
-        "CloudWatchHandler",
-        "CloudWatchLogger",
-        "get_cloudwatch_logger",
-        "configure_cloudwatch",
-    ])
+    __all__.extend(
+        [
+            "CloudWatchHandler",
+            "CloudWatchLogger",
+            "get_cloudwatch_logger",
+            "configure_cloudwatch",
+        ]
+    )

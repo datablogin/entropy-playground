@@ -9,12 +9,7 @@ __author__ = "Entropy-Playground Contributors"
 __license__ = "MIT"
 
 # Core components
-from . import agents
-from . import cli
-from . import github
-from . import infrastructure
-from . import logging
-from . import runtime
+from . import agents, cli, github, infrastructure, logging, runtime
 
 __all__ = [
     "agents",

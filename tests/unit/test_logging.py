@@ -1,36 +1,31 @@
 """Tests for the logging framework."""
 
 import json
-import os
 import tempfile
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
-from unittest.mock import Mock, patch, MagicMock
+from unittest.mock import Mock, patch
 
-import pytest
-import structlog
-
-from entropy_playground.logging.logger import (
-    setup_logging,
-    get_logger,
-    LogContext,
-    add_timestamp,
-    add_request_context,
-    add_agent_metadata,
+from entropy_playground.logging.aggregator import (
+    LogAggregator,
+    LogEntry,
+    LogQuery,
+    get_log_stats,
+    search_logs,
 )
 from entropy_playground.logging.audit import (
     AuditEvent,
     AuditEventType,
     AuditLogger,
-    get_audit_logger,
     configure_audit_logger,
+    get_audit_logger,
 )
-from entropy_playground.logging.aggregator import (
-    LogEntry,
-    LogQuery,
-    LogAggregator,
-    search_logs,
-    get_log_stats,
+from entropy_playground.logging.logger import (
+    LogContext,
+    add_agent_metadata,
+    add_timestamp,
+    get_logger,
+    setup_logging,
 )
 
 
@@ -72,7 +67,7 @@ class TestStructuredLogging:
             assert log_file.exists()
 
             # Verify log content
-            with open(log_file, "r") as f:
+            with open(log_file) as f:
                 content = f.read()
                 assert "test message" in content
                 assert "key" in content
@@ -89,7 +84,7 @@ class TestStructuredLogging:
 
             # Read and parse log file
             log_file = Path(temp_dir) / "entropy-playground.log"
-            with open(log_file, "r") as f:
+            with open(log_file) as f:
                 line = f.readline()
                 data = json.loads(line)
 
@@ -110,6 +105,7 @@ class TestStructuredLogging:
 
             # Get the root logger and add our small rotation handler
             import logging
+
             from entropy_playground.logging.logger import setup_file_handler
 
             handler = setup_file_handler(
@@ -142,7 +138,7 @@ class TestStructuredLogging:
             mock_get_logger.return_value = mock_logger
             mock_logger.bind.return_value = mock_logger
 
-            logger = get_logger("test", agent_id="agent-123")
+            get_logger("test", agent_id="agent-123")
             mock_logger.bind.assert_called_with(agent_id="agent-123")
 
     def test_log_context_manager(self):
@@ -196,7 +192,7 @@ class TestAuditLogging:
     def test_audit_logger_initialization(self):
         """Test audit logger initialization."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            audit_logger = AuditLogger(
+            AuditLogger(
                 log_dir=Path(temp_dir),
                 enable_file_logging=True,
             )
@@ -227,7 +223,7 @@ class TestAuditLogging:
             assert audit_file.exists()
 
             # Verify content
-            with open(audit_file, "r") as f:
+            with open(audit_file) as f:
                 line = f.readline()
                 data = json.loads(line)
                 assert data["id"] == event.id
@@ -268,7 +264,7 @@ class TestAuditLogging:
             # Verify all events were logged
             date_str = datetime.utcnow().strftime("%Y-%m-%d")
             audit_file = Path(temp_dir) / f"audit-{date_str}.jsonl"
-            with open(audit_file, "r") as f:
+            with open(audit_file) as f:
                 lines = f.readlines()
                 assert len(lines) == 3
 

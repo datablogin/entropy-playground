@@ -9,7 +9,6 @@ import yaml
 
 from entropy_playground.infrastructure.config import (
     AgentConfig,
-    AgentsConfig,
     Config,
     GitHubConfig,
 )

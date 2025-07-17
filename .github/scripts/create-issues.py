@@ -9,12 +9,13 @@ import re
 import subprocess
 import sys
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 
 def parse_issues_file(filepath):
     """Parse ISSUES.md file and extract issue information."""
-    with open(filepath, "r") as f:
+    with open(filepath) as f:
         content = f.read()
 
     # Split by issue headers

@@ -6,16 +6,17 @@ Requires PyGithub: pip install PyGithub pyyaml python-dotenv
 
 import os
 import sys
-import yaml
-from github import Github
 from pathlib import Path
+
+import yaml
 from dotenv import load_dotenv
+from github import Github
 
 
 def load_labels_config():
     """Load labels from the labels.yml file."""
     config_path = Path(__file__).parent.parent / "labels.yml"
-    with open(config_path, "r") as f:
+    with open(config_path) as f:
         return yaml.safe_load(f)
 
 

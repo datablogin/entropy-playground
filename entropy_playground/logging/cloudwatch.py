@@ -6,11 +6,12 @@ import time
 from datetime import datetime
 from queue import Empty, Queue
 from threading import Event, Thread
-from typing import Any, TYPE_CHECKING
+from typing import Any
 
 try:
     import boto3
     from botocore.exceptions import ClientError
+
     HAS_BOTO3 = True
 except ImportError:
     HAS_BOTO3 = False
@@ -45,7 +46,7 @@ class CloudWatchHandler:
                 "boto3 is required for CloudWatch logging. "
                 "Install with: pip install entropy-playground[aws]"
             )
-        
+
         self.logger = get_logger(__name__)
         self.log_group_name = log_group_name
         self.log_stream_name = log_stream_name or self._generate_stream_name()

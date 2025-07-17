@@ -2,15 +2,14 @@
 Unit tests for GitHub API client.
 """
 
-import os
 import time
 from datetime import datetime, timedelta
-from unittest.mock import Mock, MagicMock, patch, PropertyMock
+from unittest.mock import Mock, patch
 
 import pytest
 from github import GithubException, RateLimitExceededException
 
-from entropy_playground.github.client import GitHubTokenManager, GitHubClient
+from entropy_playground.github.client import GitHubClient, GitHubTokenManager
 
 
 class TestGitHubTokenManager:

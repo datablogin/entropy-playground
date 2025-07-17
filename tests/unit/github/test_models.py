@@ -3,27 +3,23 @@ Unit tests for GitHub Pydantic models.
 """
 
 from datetime import datetime, timedelta
-from typing import Dict, Any
 
 import pytest
 from pydantic import ValidationError
 
 from entropy_playground.github.models import (
-    User,
+    GitHubError,
+    Issue,
+    IssueState,
     Label,
     Milestone,
-    Repository,
-    Issue,
     PullRequest,
     PullRequestBranch,
-    Comment,
-    Review,
-    RateLimit,
-    RateLimitInfo,
-    WebhookEvent,
-    GitHubError,
-    IssueState,
     PullRequestState,
+    RateLimit,
+    Repository,
+    User,
+    WebhookEvent,
 )
 
 
