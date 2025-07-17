@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: GitHub Discussions
+    url: https://github.com/datablogin/entropy-playground/discussions
+    about: Please ask and answer questions in GitHub Discussions
+  - name: Documentation
+    url: https://github.com/datablogin/entropy-playground/blob/main/README.md
+    about: Check out our documentation for common questions
+  - name: Contributing Guidelines
+    url: https://github.com/datablogin/entropy-playground/blob/main/CONTRIBUTING.md
+    about: Please read our contributing guidelines before submitting
