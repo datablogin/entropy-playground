@@ -1,6 +1,7 @@
 # Architecture Overview
 
-Entropy-Playground is designed as a modular, extensible framework for orchestrating AI agents that work collaboratively on software development tasks.
+Entropy-Playground is designed as a modular, extensible framework for orchestrating AI agents that work
+collaboratively on software development tasks.
 
 ## Core Components
 
@@ -8,7 +9,7 @@ Entropy-Playground is designed as a modular, extensible framework for orchestrat
 
 The agent runtime manages the lifecycle of AI agents:
 
-```
+```text
 entropy_playground/
 ├── agents/          # Agent role implementations
 ├── runtime/         # Core runtime and scheduling
@@ -16,6 +17,7 @@ entropy_playground/
 ```
 
 Key concepts:
+
 - **BaseAgent**: Abstract base class for all agents
 - **AgentRegistry**: Manages available agent types
 - **TaskScheduler**: Coordinates agent activities
@@ -36,7 +38,7 @@ entropy_playground/github/
 
 Manages deployment and execution environments:
 
-```
+```text
 entropy_playground/infrastructure/
 ├── docker/         # Container management
 ├── terraform/      # Cloud provisioning
@@ -47,7 +49,7 @@ entropy_playground/infrastructure/
 
 Provides comprehensive logging and audit trails:
 
-```
+```text
 entropy_playground/logging/
 ├── structured.py   # Structured logging
 ├── audit.py        # Audit trail
@@ -67,6 +69,7 @@ Each agent follows a standard lifecycle:
 ## Communication Patterns
 
 Agents communicate through:
+
 - **Redis PubSub**: Real-time event notifications
 - **Shared State**: Redis-backed state management
 - **GitHub API**: Coordination through issues and PRs

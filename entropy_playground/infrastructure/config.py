@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, Field, field_validator
@@ -43,16 +44,10 @@ class Config(BaseModel):
 
     version: str = Field(default="0.1.0", description="Configuration version")
     workspace: Path = Field(
-        default_factory=lambda: Path.cwd() / ".entropy",
-        description="Workspace directory path"
+        default_factory=lambda: Path.cwd() / ".entropy", description="Workspace directory path"
     )
-    redis_url: str = Field(
-        default="redis://localhost:6379",
-        description="Redis connection URL"
-    )
-    github: GitHubConfig = Field(
-        default_factory=lambda: GitHubConfig(token="${GITHUB_TOKEN}")
-    )
+    redis_url: str = Field(default="redis://localhost:6379", description="Redis connection URL")
+    github: GitHubConfig = Field(default_factory=lambda: GitHubConfig(token="${GITHUB_TOKEN}"))
     agents: AgentsConfig = Field(default_factory=AgentsConfig)
 
     model_config = {
@@ -89,7 +84,7 @@ class Config(BaseModel):
         Returns:
             Config instance with values from environment
         """
-        config_data = {}
+        config_data: dict[str, Any] = {}
 
         if workspace := os.environ.get("ENTROPY_WORKSPACE"):
             config_data["workspace"] = Path(workspace)
@@ -98,7 +93,7 @@ class Config(BaseModel):
             config_data["redis_url"] = redis_url
 
         if github_token := os.environ.get("GITHUB_TOKEN"):
-            config_data["github"] = {"token": github_token}
+            config_data["github"] = GitHubConfig(token=github_token)
 
         return cls(**config_data)
 
@@ -141,4 +136,6 @@ class Config(BaseModel):
         if not hasattr(self.agents, agent_type):
             raise ValueError(f"Unknown agent type: {agent_type}")
 
-        return getattr(self.agents, agent_type)
+        agent_config = getattr(self.agents, agent_type)
+        assert isinstance(agent_config, AgentConfig)
+        return agent_config

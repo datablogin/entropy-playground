@@ -72,7 +72,7 @@ class GitHubClient:
         token: str | None = None,
         base_url: str | None = None,
         retry_count: int = DEFAULT_RETRY_COUNT,
-        retry_delay: float = DEFAULT_RETRY_DELAY
+        retry_delay: float = DEFAULT_RETRY_DELAY,
     ):
         """
         Initialize GitHub client.
@@ -89,10 +89,7 @@ class GitHubClient:
         self._retry_delay = retry_delay
 
         # Initialize PyGithub client
-        self._github = Github(
-            auth=self._token_manager.get_token(),
-            base_url=base_url
-        )
+        self._github = Github(auth=self._token_manager.get_token(), base_url=base_url)
 
         # Track rate limit info
         self._rate_limit_reset: datetime | None = None
@@ -102,8 +99,8 @@ class GitHubClient:
             extra={
                 "base_url": base_url or "https://api.github.com",
                 "retry_count": retry_count,
-                "retry_delay": retry_delay
-            }
+                "retry_delay": retry_delay,
+            },
         )
 
     def _handle_rate_limit(self, exception: RateLimitExceededException) -> None:
@@ -114,10 +111,7 @@ class GitHubClient:
         wait_time = (reset_time - datetime.now()).total_seconds()
         logger.warning(
             f"Rate limit exceeded. Waiting {wait_time:.0f} seconds until reset",
-            extra={
-                "reset_time": reset_time.isoformat(),
-                "wait_seconds": wait_time
-            }
+            extra={"reset_time": reset_time.isoformat(), "wait_seconds": wait_time},
         )
 
         if wait_time > 0:
@@ -152,11 +146,7 @@ class GitHubClient:
                 last_exception = e
                 logger.warning(
                     f"GitHub API error (attempt {attempt + 1}/{self._retry_count}): {e}",
-                    extra={
-                        "status": e.status,
-                        "data": e.data,
-                        "attempt": attempt + 1
-                    }
+                    extra={"status": e.status, "data": e.data, "attempt": attempt + 1},
                 )
 
                 # Don't retry on certain status codes
@@ -202,7 +192,7 @@ class GitHubClient:
         labels: list[str] | None = None,
         assignee: str | None = None,
         sort: str = "created",
-        direction: str = "desc"
+        direction: str = "desc",
     ) -> list[Issue]:
         """
         List issues for a repository.
@@ -221,13 +211,15 @@ class GitHubClient:
         repo = self.get_repository(repo_name)
 
         def _get_issues():
-            return list(repo.get_issues(
-                state=state,
-                labels=labels or [],
-                assignee=assignee,
-                sort=sort,
-                direction=direction
-            ))
+            return list(
+                repo.get_issues(
+                    state=state,
+                    labels=labels or [],
+                    assignee=assignee,
+                    sort=sort,
+                    direction=direction,
+                )
+            )
 
         return self._retry_operation(_get_issues)
 
@@ -237,7 +229,7 @@ class GitHubClient:
         title: str,
         body: str | None = None,
         labels: list[str] | None = None,
-        assignees: list[str] | None = None
+        assignees: list[str] | None = None,
     ) -> Issue:
         """
         Create a new issue.
@@ -258,7 +250,7 @@ class GitHubClient:
             title=title,
             body=body,
             labels=labels or [],
-            assignees=assignees or []
+            assignees=assignees or [],
         )
 
     def create_pull_request(
@@ -268,7 +260,7 @@ class GitHubClient:
         body: str | None = None,
         head: str = None,
         base: str = "main",
-        draft: bool = False
+        draft: bool = False,
     ) -> PullRequest:
         """
         Create a new pull request.
@@ -286,12 +278,7 @@ class GitHubClient:
         """
         repo = self.get_repository(repo_name)
         return self._retry_operation(
-            repo.create_pull,
-            title=title,
-            body=body,
-            head=head,
-            base=base,
-            draft=draft
+            repo.create_pull, title=title, body=body, head=head, base=base, draft=draft
         )
 
     def get_pull_request(self, repo_name: str, pr_number: int) -> PullRequest:
@@ -315,7 +302,7 @@ class GitHubClient:
         sort: str = "created",
         direction: str = "desc",
         base: str | None = None,
-        head: str | None = None
+        head: str | None = None,
     ) -> list[PullRequest]:
         """
         List pull requests for a repository.
@@ -334,13 +321,9 @@ class GitHubClient:
         repo = self.get_repository(repo_name)
 
         def _get_pulls():
-            return list(repo.get_pulls(
-                state=state,
-                sort=sort,
-                direction=direction,
-                base=base,
-                head=head
-            ))
+            return list(
+                repo.get_pulls(state=state, sort=sort, direction=direction, base=base, head=head)
+            )
 
         return self._retry_operation(_get_pulls)
 
@@ -356,17 +339,16 @@ class GitHubClient:
             "core": {
                 "limit": rate_limit.core.limit,
                 "remaining": rate_limit.core.remaining,
-                "reset": rate_limit.core.reset.isoformat()
+                "reset": rate_limit.core.reset.isoformat(),
             },
             "search": {
                 "limit": rate_limit.search.limit,
                 "remaining": rate_limit.search.remaining,
-                "reset": rate_limit.search.reset.isoformat()
-            }
+                "reset": rate_limit.search.reset.isoformat(),
+            },
         }
 
     def close(self) -> None:
         """Clean up resources."""
         self._token_manager.revoke()
         logger.info("GitHub client closed")
-

@@ -35,7 +35,7 @@ resource "aws_instance" "agent" {
     volume_type = var.root_volume_type
     volume_size = var.root_volume_size
     encrypted   = true
-    
+
     tags = merge(
       var.tags,
       {

@@ -61,8 +61,11 @@ class LogEntry:
             agent_id=agent_info.get("id"),
             agent_type=agent_info.get("type"),
             agent_role=agent_info.get("role"),
-            metadata={k: v for k, v in data.items()
-                     if k not in ["timestamp", "level", "logger_name", "event", "message", "agent"]},
+            metadata={
+                k: v
+                for k, v in data.items()
+                if k not in ["timestamp", "level", "logger_name", "event", "message", "agent"]
+            },
             raw=json.dumps(data),
         )
 
@@ -170,9 +173,7 @@ class LogAggregator:
                                     yield entry
 
                 except Exception as e:
-                    self.logger.warning(
-                        f"Error reading log file {log_file}: {e}"
-                    )
+                    self.logger.warning(f"Error reading log file {log_file}: {e}")
 
     def _parse_text_log(self, line: str) -> LogEntry | None:
         """Parse a text log line.
@@ -381,6 +382,7 @@ class LogAggregator:
 
         # Follow new entries (simplified - in production would use inotify or similar)
         import time
+
         last_check = datetime.utcnow()
 
         while True:

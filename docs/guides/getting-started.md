@@ -68,6 +68,7 @@ docker-compose up -d
 ```
 
 This starts:
+
 - Redis for state management
 - Local development environment
 

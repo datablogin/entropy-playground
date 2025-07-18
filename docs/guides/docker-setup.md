@@ -4,19 +4,21 @@ This guide explains how to use Docker for local development and running the Entr
 
 ## Prerequisites
 
-- Docker Engine 20.10+ 
+- Docker Engine 20.10+
 - Docker Compose v2.0+
 - Git
 
 ## Quick Start
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/datablogin/entropy-playground.git
    cd entropy-playground
    ```
 
 2. Copy the environment file:
+
    ```bash
    cp .env.example .env
    ```
@@ -27,6 +29,7 @@ This guide explains how to use Docker for local development and running the Entr
    - `OPENAI_API_KEY`: (Optional) Your OpenAI API key
 
 4. Build and start the services:
+
    ```bash
    docker-compose up --build
    ```
@@ -34,12 +37,14 @@ This guide explains how to use Docker for local development and running the Entr
 ## Services
 
 ### Redis
+
 - **Purpose**: State management and inter-agent communication
 - **Port**: 6379
 - **Health check**: Automatically configured
 - **Data persistence**: Stored in `redis-data` volume
 
 ### Agent
+
 - **Purpose**: Main agent runtime
 - **Security**: Runs as non-root user, read-only filesystem
 - **Volumes**:
@@ -48,6 +53,7 @@ This guide explains how to use Docker for local development and running the Entr
   - Logs at `./logs`
 
 ### Dev
+
 - **Purpose**: Development environment with build tools
 - **Usage**: Interactive bash shell for development
 - **Access**: `docker-compose run --rm dev`
@@ -92,14 +98,18 @@ docker-compose down -v
 ## Troubleshooting
 
 ### Permission Issues
+
 If you encounter permission errors, ensure your user has Docker permissions:
+
 ```bash
 sudo usermod -aG docker $USER
 # Log out and back in
 ```
 
 ### Port Conflicts
+
 If port 6379 is already in use, modify the Redis port in `docker-compose.yml`:
+
 ```yaml
 redis:
   ports:
@@ -107,7 +117,9 @@ redis:
 ```
 
 ### Build Failures
+
 Clean rebuild:
+
 ```bash
 docker-compose down -v
 docker-compose build --no-cache

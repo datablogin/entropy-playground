@@ -5,15 +5,15 @@
 - name: "priority: critical"
   color: "d73a4a"
   description: "Critical priority - blocks release or causes data loss"
-  
+
 - name: "priority: high"
   color: "e4605d"
   description: "High priority - should be addressed soon"
-  
+
 - name: "priority: medium"
   color: "f79454"
   description: "Medium priority - normal development flow"
-  
+
 - name: "priority: low"
   color: "ffd93d"
   description: "Low priority - nice to have"
@@ -22,35 +22,35 @@
 - name: "type: bug"
   color: "d73a4a"
   description: "Something isn't working"
-  
+
 - name: "type: feature"
   color: "0052cc"
   description: "New feature or request"
-  
+
 - name: "type: enhancement"
   color: "5319e7"
   description: "Improvement to existing functionality"
-  
+
 - name: "type: documentation"
   color: "0075ca"
   description: "Improvements or additions to documentation"
-  
+
 - name: "type: security"
   color: "ff0000"
   description: "Security vulnerability or improvement"
-  
+
 - name: "type: performance"
   color: "f97316"
   description: "Performance improvement"
-  
+
 - name: "type: refactor"
   color: "e11d48"
   description: "Code refactoring"
-  
+
 - name: "type: test"
   color: "fbca04"
   description: "Testing improvements"
-  
+
 - name: "type: ci/cd"
   color: "106bbe"
   description: "Continuous Integration/Deployment"
@@ -59,23 +59,23 @@
 - name: "component: infrastructure"
   color: "bfd4f2"
   description: "Infrastructure layer (Docker, K8s, Terraform)"
-  
+
 - name: "component: agents"
   color: "c2e0c6"
   description: "Agent runtime and roles"
-  
+
 - name: "component: github-integration"
   color: "d4c5f9"
   description: "GitHub API integration"
-  
+
 - name: "component: cli"
   color: "fef2c0"
   description: "Command-line interface"
-  
+
 - name: "component: logging"
   color: "f9d0c4"
   description: "Audit and logging system"
-  
+
 - name: "component: aws"
   color: "ff9900"
   description: "AWS-specific functionality"
@@ -84,19 +84,19 @@
 - name: "status: ready"
   color: "0e8a16"
   description: "Ready to be worked on"
-  
+
 - name: "status: in-progress"
   color: "006b75"
   description: "Actively being worked on"
-  
+
 - name: "status: blocked"
   color: "e11d48"
   description: "Blocked by another issue or external factor"
-  
+
 - name: "status: needs-review"
   color: "fbca04"
   description: "Needs code review"
-  
+
 - name: "status: needs-testing"
   color: "7057ff"
   description: "Needs testing"
@@ -105,19 +105,19 @@
 - name: "good first issue"
   color: "7057ff"
   description: "Good for newcomers"
-  
+
 - name: "help wanted"
   color: "008672"
   description: "Extra attention is needed"
-  
+
 - name: "wontfix"
   color: "ffffff"
   description: "This will not be worked on"
-  
+
 - name: "duplicate"
   color: "cfd3d7"
   description: "This issue or pull request already exists"
-  
+
 - name: "invalid"
   color: "e4e669"
   description: "This doesn't seem right"
@@ -126,7 +126,7 @@
 - name: "dependencies"
   color: "0366d6"
   description: "Pull requests that update a dependency file"
-  
+
 - name: "security-update"
   color: "d1260f"
   description: "Security updates from Dependabot"
@@ -135,11 +135,11 @@
 - name: "ai: claude-compatible"
   color: "9333ea"
   description: "Compatible with Claude AI assistance"
-  
+
 - name: "ai: needs-human-review"
   color: "dc2626"
   description: "AI-generated content needs human review"
-  
+
 - name: "ai: agent-task"
   color: "7c3aed"
   description: "Task suitable for AI agents"
@@ -148,19 +148,19 @@
 - name: "size: xs"
   color: "00ff00"
   description: "Extra small - less than 1 hour"
-  
+
 - name: "size: s"
   color: "20ff00"
   description: "Small - 1-2 hours"
-  
+
 - name: "size: m"
   color: "40ff00"
   description: "Medium - 3-5 hours"
-  
+
 - name: "size: l"
   color: "60ff00"
   description: "Large - 1-2 days"
-  
+
 - name: "size: xl"
   color: "80ff00"
   description: "Extra large - 3+ days"
