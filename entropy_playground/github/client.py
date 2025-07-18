@@ -51,9 +51,9 @@ class GitHubTokenManager:
         if not any(self._token.startswith(prefix) for prefix in valid_prefixes):
             logger.warning("Token does not match expected GitHub token format")
 
-    def get_token(self) -> str:
+    def get_token(self) -> str | None:
         """Get the GitHub token."""
-        return self._token or ""
+        return self._token
 
     def revoke(self) -> None:
         """Clear the token from memory."""
@@ -91,7 +91,8 @@ class GitHubClient:
 
         # Initialize PyGithub client
         # Use token directly for compatibility with older PyGithub versions
-        self._github = Github(self._token_manager.get_token())
+        token = self._token_manager.get_token()
+        self._github = Github(token if token else None)
 
         # Track rate limit info
         self._rate_limit_reset: datetime | None = None
