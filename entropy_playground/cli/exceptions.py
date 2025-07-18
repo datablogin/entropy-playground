@@ -1,5 +1,7 @@
 """CLI-specific exceptions and error handling."""
 
+from typing import Any, Callable, Optional, TypeVar
+
 import click
 from rich.console import Console
 
@@ -9,7 +11,7 @@ console = Console()
 class EntropyPlaygroundError(click.ClickException):
     """Base exception for Entropy-Playground CLI errors."""
 
-    def show(self, file=None) -> None:
+    def show(self, file: Optional[Any] = None) -> None:
         """Display the error message."""
         console.print(f"[red]Error: {self.format_message()}[/red]")
 
@@ -32,7 +34,10 @@ class AgentError(EntropyPlaygroundError):
     pass
 
 
-def handle_errors(func):
+F = TypeVar("F", bound=Callable[..., Any])
+
+
+def handle_errors(func: F) -> F:
     """Decorator to handle common errors in CLI commands.
 
     Catches and formats errors for better user experience.
@@ -40,7 +45,7 @@ def handle_errors(func):
     import functools
 
     @functools.wraps(func)
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
         try:
             return func(*args, **kwargs)
         except EntropyPlaygroundError:
@@ -63,4 +68,4 @@ def handle_errors(func):
                 f"An unexpected error occurred: {str(e)}\n" "Run with --verbose for more details."
             ) from e
 
-    return wrapper
+    return wrapper  # type: ignore[return-value]

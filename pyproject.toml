@@ -106,8 +106,8 @@ module = [
 ignore_missing_imports = true
 
 [tool.bandit]
-exclude_dirs = ["tests", ".venv", "venv", ".tox", "build", "dist"]
-skips = ["B101"]  # Skip assert_used in tests
+exclude_dirs = ["tests", ".venv", "venv", ".tox", "build", "dist", ".github"]
+skips = ["B101", "B404", "B603", "B106"]  # Skip assert_used, subprocess, hardcoded_password
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

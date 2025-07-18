@@ -2,6 +2,7 @@
 
 import os
 from pathlib import Path
+from typing import Any
 
 import yaml
 from pydantic import BaseModel, Field, field_validator
@@ -83,7 +84,7 @@ class Config(BaseModel):
         Returns:
             Config instance with values from environment
         """
-        config_data = {}
+        config_data: dict[str, Any] = {}
 
         if workspace := os.environ.get("ENTROPY_WORKSPACE"):
             config_data["workspace"] = Path(workspace)
@@ -92,7 +93,7 @@ class Config(BaseModel):
             config_data["redis_url"] = redis_url
 
         if github_token := os.environ.get("GITHUB_TOKEN"):
-            config_data["github"] = {"token": github_token}
+            config_data["github"] = GitHubConfig(token=github_token)
 
         return cls(**config_data)
 
@@ -135,4 +136,6 @@ class Config(BaseModel):
         if not hasattr(self.agents, agent_type):
             raise ValueError(f"Unknown agent type: {agent_type}")
 
-        return getattr(self.agents, agent_type)
+        agent_config = getattr(self.agents, agent_type)
+        assert isinstance(agent_config, AgentConfig)
+        return agent_config
