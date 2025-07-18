@@ -211,11 +211,14 @@ class TestBaseAgent:
     async def test_agent_restart(self, agent):
         """Test agent restart."""
         await agent.start()
+        await asyncio.sleep(0.1)  # Ensure some uptime
         initial_uptime = agent.uptime
+        assert initial_uptime > 0  # Verify we have some uptime
 
         await agent.restart()
         assert agent.state == AgentState.RUNNING
-        assert agent.uptime < initial_uptime  # Uptime reset after restart
+        # After restart, uptime should be very small (near 0)
+        assert agent.uptime < initial_uptime / 2  # More robust check
 
     async def test_state_change_callbacks(self, agent):
         """Test state change callbacks."""
