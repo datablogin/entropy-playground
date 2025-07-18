@@ -333,7 +333,13 @@ class GitHubClient:
 
         def _get_pulls() -> list[PullRequest]:
             return list(
-                repo.get_pulls(state=state, sort=sort, direction=direction, base=base or NotSet, head=head or NotSet)
+                repo.get_pulls(
+                    state=state,
+                    sort=sort,
+                    direction=direction,
+                    base=base or NotSet,
+                    head=head or NotSet,
+                )
             )
 
         result: list[PullRequest] = self._retry_operation(_get_pulls)
