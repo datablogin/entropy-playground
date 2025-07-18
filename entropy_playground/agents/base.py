@@ -228,6 +228,9 @@ class BaseAgent(ABC):
 
         self._set_state(AgentState.STOPPED)
         self.logger.info("Agent stopped", agent_name=self.config.name, uptime_seconds=self.uptime)
+        
+        # Reset start time so uptime resets on restart
+        self._start_time = None
 
     async def restart(self) -> None:
         """Restart the agent."""
