@@ -212,7 +212,7 @@ class BaseAgent(ABC):
                     asyncio.gather(*self._tasks, return_exceptions=True),
                     timeout=self.config.shutdown_timeout,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 self.logger.warning(
                     "Some tasks did not complete within shutdown timeout",
                     agent_name=self.config.name,
@@ -365,7 +365,7 @@ class BaseAgent(ABC):
                 await asyncio.wait_for(
                     self._shutdown_event.wait(), timeout=self.config.health_check_interval
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Normal timeout, continue monitoring
                 continue
             except Exception as e:
