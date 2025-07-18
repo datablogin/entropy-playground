@@ -296,4 +296,3 @@ def configure_audit_logger(
     """
     global _audit_logger
     _audit_logger = AuditLogger(log_dir, enable_file_logging)
-

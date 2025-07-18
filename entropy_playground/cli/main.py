@@ -25,9 +25,7 @@ logger = get_logger(__name__)
     type=click.Path(exists=True, path_type=Path),
     help="Path to configuration file",
 )
-@click.option(
-    "--verbose", "-v", is_flag=True, help="Enable verbose output"
-)
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
 @click.pass_context
 def cli(ctx: click.Context, config: Path | None, verbose: bool) -> None:
     """Entropy-Playground: GitHub-Native AI Coding Agent Framework.
@@ -118,6 +116,7 @@ def init(
     # Test GitHub connectivity
     try:
         from github import Github
+
         g = Github(github_token)
         user = g.get_user()
         console.print(f"✓ GitHub authentication successful (user: {user.login})")
@@ -174,15 +173,11 @@ def start(
 
     # Validate repository format
     if "/" not in repo:
-        raise ConfigurationError(
-            f"Invalid repository format: {repo}. Expected format: owner/repo"
-        )
+        raise ConfigurationError(f"Invalid repository format: {repo}. Expected format: owner/repo")
 
     owner, repo_name = repo.split("/", 1)
     if not owner or not repo_name:
-        raise ConfigurationError(
-            f"Invalid repository format: {repo}. Expected format: owner/repo"
-        )
+        raise ConfigurationError(f"Invalid repository format: {repo}. Expected format: owner/repo")
 
     # Check configuration
     if not config.validate_github_token():
@@ -282,4 +277,3 @@ def logs(
 
 if __name__ == "__main__":
     cli()
-

@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+
+    - name: Build package
+      run: |
+        python -m build
+
+    - name: Create changelog
+      id: changelog
+      run: |
+        # Get the previous tag
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$PREV_TAG" ]; then
+          echo "No previous tag found, using first commit"
+          PREV_TAG=$(git rev-list --max-parents=0 HEAD)
+        fi
+
+        # Generate changelog
+        echo "## What's Changed" > CHANGELOG.md
+        echo "" >> CHANGELOG.md
+
+        # Get commit messages between tags
+        git log --pretty=format:"* %s (%h) by @%an" ${PREV_TAG}..HEAD >> CHANGELOG.md
+
+        echo "" >> CHANGELOG.md
+        echo "## Contributors" >> CHANGELOG.md
+        git log --pretty=format:"* @%an" ${PREV_TAG}..HEAD | sort -u >> CHANGELOG.md
+
+        # Set output for release body
+        echo "changelog<<EOF" >> $GITHUB_OUTPUT
+        cat CHANGELOG.md >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body: ${{ steps.changelog.outputs.changelog }}
+        files: |
+          dist/*.whl
+          dist/*.tar.gz
+        generate_release_notes: true
+        draft: false
+        prerelease: ${{ contains(github.ref, '-rc') || contains(github.ref, '-beta') || contains(github.ref, '-alpha') }}
+
+    - name: Publish to PyPI
+      if: ${{ !contains(github.ref, '-rc') && !contains(github.ref, '-beta') && !contains(github.ref, '-alpha') }}
+      env:
+        TWINE_USERNAME: __token__
+        TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      run: |
+        if [ -n "$TWINE_PASSWORD" ]; then
+          twine upload dist/*
+        else
+          echo "PyPI token not configured, skipping upload"
+        fi

@@ -64,6 +64,8 @@ include = ["entropy_playground*"]
 [tool.ruff]
 target-version = "py311"
 line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -78,7 +80,7 @@ ignore = [
     "B008",  # do not perform function calls in argument defaults
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ["F401"]
 
 [tool.mypy]
@@ -95,6 +97,17 @@ warn_unused_ignores = true
 warn_no_return = true
 warn_unreachable = true
 strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "boto3",
+    "botocore.*",
+]
+ignore_missing_imports = true
+
+[tool.bandit]
+exclude_dirs = ["tests", ".venv", "venv", ".tox", "build", "dist", ".github"]
+skips = ["B101", "B404", "B603", "B106"]  # Skip assert_used, subprocess, hardcoded_password
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

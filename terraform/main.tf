@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.5.0"
-  
+
   required_providers {
     aws = {
       source  = "hashicorp/aws"
@@ -76,10 +76,10 @@ module "ec2_agents" {
   security_group_ids    = [module.vpc.agent_security_group_id]
   iam_instance_profile  = module.iam.agent_instance_profile_name
   user_data_script      = file("${path.module}/scripts/agent-init.sh")
-  
+
   root_volume_size      = var.agent_root_volume_size
   root_volume_type      = var.agent_root_volume_type
-  
+
   tags = {
     Role = "agent"
   }

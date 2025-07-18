@@ -66,7 +66,7 @@ def setup_file_handler(
     )
 
     # Use JSON formatter for file logs
-    formatter = logging.Formatter('%(message)s')
+    formatter = logging.Formatter("%(message)s")
     handler.setFormatter(formatter)
 
     return handler
@@ -93,7 +93,7 @@ def setup_logging(
 
     # Add console handler
     console_handler = logging.StreamHandler(sys.stdout)
-    console_handler.setFormatter(logging.Formatter('%(message)s'))
+    console_handler.setFormatter(logging.Formatter("%(message)s"))
     root_logger.addHandler(console_handler)
 
     # Add file handler if enabled
@@ -151,7 +151,7 @@ def get_logger(name: str, **context: Any) -> structlog.stdlib.BoundLogger:
     logger = structlog.get_logger(name)
     if context:
         logger = logger.bind(**context)
-    return logger
+    return logger  # type: ignore[no-any-return]
 
 
 class LogContext:
@@ -183,4 +183,3 @@ class LogContext:
 # Initialize logging on module import
 log_level = os.environ.get("LOG_LEVEL", "INFO")
 setup_logging(log_level)
-
