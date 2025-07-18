@@ -1,6 +1,7 @@
 """CLI-specific exceptions and error handling."""
 
-from typing import Any, Callable, Optional, TypeVar
+from collections.abc import Callable
+from typing import Any, Optional, TypeVar
 
 import click
 from rich.console import Console
