@@ -7,3 +7,19 @@ Core runtime functionality including:
 - Inter-agent communication
 - State management
 """
+
+from entropy_playground.runtime.registry import (
+    AgentFactory,
+    AgentRegistry,
+    AgentRegistryError,
+    get_registry,
+    register_agent,
+)
+
+__all__ = [
+    "AgentRegistry",
+    "AgentFactory",
+    "AgentRegistryError",
+    "get_registry",
+    "register_agent",
+]
