@@ -34,7 +34,12 @@ repos:
           - types-PyYAML
           - types-redis
           - pydantic
-        args: ['--ignore-missing-imports']
+          - click
+          - structlog
+          - pygithub
+          - python-dotenv
+          - rich
+        args: ['--config-file=pyproject.toml', '--ignore-missing-imports']
         exclude: '^(tests/|docs/|examples/)'
 
   - repo: https://github.com/pycqa/bandit
