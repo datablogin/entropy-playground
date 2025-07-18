@@ -106,6 +106,7 @@ class BaseAgent(ABC):
         self._tasks: set[asyncio.Task] = set()
         self._shutdown_event = asyncio.Event()
         self._health_check_task: asyncio.Task | None = None
+        self._run_task: asyncio.Task | None = None
 
         # Event callbacks
         self._on_state_change: list[Callable[[AgentState, AgentState], None]] = []
@@ -176,8 +177,8 @@ class BaseAgent(ABC):
                 agent_role=self.config.role,
             )
 
-            # Run the agent
-            await self.run()
+            # Run the agent in the background
+            self._run_task = self.create_task(self.run())
 
         except Exception as e:
             self.logger.error(

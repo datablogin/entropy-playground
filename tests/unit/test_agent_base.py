@@ -6,6 +6,7 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+import pytest_asyncio
 from pydantic import ValidationError
 
 from entropy_playground.agents import (
@@ -162,7 +163,7 @@ class TestBaseAgent:
             shutdown_timeout=1
         )
     
-    @pytest.fixture
+    @pytest_asyncio.fixture
     async def agent(self, config):
         """Create test agent instance."""
         agent = MockAgent(config)
@@ -190,6 +191,7 @@ class TestBaseAgent:
         await agent.start()
         assert agent.state == AgentState.RUNNING
         assert agent.initialized
+        await asyncio.sleep(0.1)  # Give run() time to execute
         assert agent.running
         assert agent.uptime > 0
         
