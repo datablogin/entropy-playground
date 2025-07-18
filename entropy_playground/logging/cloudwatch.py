@@ -164,7 +164,7 @@ class CloudWatchHandler:
             return
 
         # Convert logs to CloudWatch format
-        log_events = []
+        log_events: list[dict[str, Any]] = []
         for log in logs:
             # Extract timestamp
             timestamp_str = log.get("timestamp", datetime.utcnow().isoformat())

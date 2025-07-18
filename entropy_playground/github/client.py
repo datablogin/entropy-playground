@@ -52,7 +52,7 @@ class GitHubTokenManager:
 
     def get_token(self) -> str:
         """Get the GitHub token."""
-        return self._token
+        return self._token or ""
 
     def revoke(self) -> None:
         """Clear the token from memory."""
@@ -117,7 +117,7 @@ class GitHubClient:
         if wait_time > 0:
             time.sleep(wait_time + 1)  # Add 1 second buffer
 
-    def _retry_operation(self, operation, *args, **kwargs) -> Any:
+    def _retry_operation(self, operation: Any, *args: Any, **kwargs: Any) -> Any:
         """
         Execute an operation with retry logic.
 
@@ -157,7 +157,10 @@ class GitHubClient:
                     time.sleep(delay)
                     delay *= 2  # Exponential backoff
 
-        raise last_exception
+        if last_exception is not None:
+            raise last_exception
+        else:
+            raise RuntimeError("Operation failed with no exception captured")
 
     def get_repository(self, repo_name: str) -> Repository:
         """
@@ -210,7 +213,7 @@ class GitHubClient:
         """
         repo = self.get_repository(repo_name)
 
-        def _get_issues():
+        def _get_issues() -> list[Issue]:
             return list(
                 repo.get_issues(
                     state=state,
@@ -221,7 +224,8 @@ class GitHubClient:
                 )
             )
 
-        return self._retry_operation(_get_issues)
+        result: list[Issue] = self._retry_operation(_get_issues)
+        return result
 
     def create_issue(
         self,
@@ -258,7 +262,7 @@ class GitHubClient:
         repo_name: str,
         title: str,
         body: str | None = None,
-        head: str = None,
+        head: str | None = None,
         base: str = "main",
         draft: bool = False,
     ) -> PullRequest:
@@ -320,12 +324,13 @@ class GitHubClient:
         """
         repo = self.get_repository(repo_name)
 
-        def _get_pulls():
+        def _get_pulls() -> list[PullRequest]:
             return list(
                 repo.get_pulls(state=state, sort=sort, direction=direction, base=base, head=head)
             )
 
-        return self._retry_operation(_get_pulls)
+        result: list[PullRequest] = self._retry_operation(_get_pulls)
+        return result
 
     def get_rate_limit(self) -> dict[str, Any]:
         """

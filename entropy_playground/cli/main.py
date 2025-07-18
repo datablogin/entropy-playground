@@ -17,16 +17,16 @@ console = Console()
 logger = get_logger(__name__)
 
 
-@click.group()
-@click.version_option(version=__version__, prog_name="entropy-playground")
-@click.option(
+@click.group()  # type: ignore[misc]
+@click.version_option(version=__version__, prog_name="entropy-playground")  # type: ignore[misc]
+@click.option(  # type: ignore[misc]
     "--config",
     "-c",
     type=click.Path(exists=True, path_type=Path),
     help="Path to configuration file",
 )
-@click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")
-@click.pass_context
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose output")  # type: ignore[misc]
+@click.pass_context  # type: ignore[misc]
 def cli(ctx: click.Context, config: Path | None, verbose: bool) -> None:
     """Entropy-Playground: GitHub-Native AI Coding Agent Framework.
 
@@ -48,26 +48,26 @@ def cli(ctx: click.Context, config: Path | None, verbose: bool) -> None:
     ctx.obj["verbose"] = verbose
 
 
-@cli.command()
-@click.option(
+@cli.command()  # type: ignore[misc]
+@click.option(  # type: ignore[misc]
     "--workspace",
     "-w",
     type=click.Path(path_type=Path),
     default=Path.cwd() / ".entropy",
     help="Path to workspace directory",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--github-token",
     envvar="GITHUB_TOKEN",
     help="GitHub API token (can also use GITHUB_TOKEN env var)",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--redis-url",
     envvar="REDIS_URL",
     default="redis://localhost:6379",
     help="Redis connection URL",
 )
-@click.pass_context
+@click.pass_context  # type: ignore[misc]
 @handle_errors
 def init(
     ctx: click.Context,
@@ -102,7 +102,7 @@ def init(
         version=__version__,
         workspace=workspace,
         redis_url=redis_url,
-        github={"token": "${GITHUB_TOKEN}"},  # Use env var reference
+        github={"token": "${GITHUB_TOKEN}"},  # type: ignore[arg-type]  # Use env var reference
     )
 
     # Save configuration
@@ -129,33 +129,33 @@ def init(
     console.print("[green]✓ Environment initialized successfully![/green]")
 
 
-@cli.command()
-@click.option(
+@cli.command()  # type: ignore[misc]
+@click.option(  # type: ignore[misc]
     "--agent",
     "-a",
     type=click.Choice(["issue_reader", "coder", "reviewer", "all"]),
     default="all",
     help="Agent type to start",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--repo",
     "-r",
     required=True,
     help="GitHub repository (format: owner/repo)",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--issue",
     "-i",
     type=int,
     help="Specific issue number to work on",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--detach",
     "-d",
     is_flag=True,
     help="Run agents in background",
 )
-@click.pass_context
+@click.pass_context  # type: ignore[misc]
 @handle_errors
 def start(
     ctx: click.Context,
@@ -195,15 +195,15 @@ def start(
     console.print("[yellow]Agent startup not yet implemented[/yellow]")
 
 
-@cli.command()
-@click.option(
+@cli.command()  # type: ignore[misc]
+@click.option(  # type: ignore[misc]
     "--format",
     "-f",
     type=click.Choice(["table", "json", "yaml"]),
     default="table",
     help="Output format",
 )
-@click.pass_context
+@click.pass_context  # type: ignore[misc]
 @handle_errors
 def status(ctx: click.Context, format: str) -> None:
     """Check the status of running agents.
@@ -219,9 +219,9 @@ def status(ctx: click.Context, format: str) -> None:
     console.print("[yellow]Status checking not yet implemented[/yellow]")
 
 
-@cli.command()
-@click.argument("agent", type=click.Choice(["issue_reader", "coder", "reviewer", "all"]))
-@click.pass_context
+@cli.command()  # type: ignore[misc]
+@click.argument("agent", type=click.Choice(["issue_reader", "coder", "reviewer", "all"]))  # type: ignore[misc]
+@click.pass_context  # type: ignore[misc]
 @handle_errors
 def stop(ctx: click.Context, agent: str) -> None:
     """Stop running agent(s).
@@ -235,28 +235,28 @@ def stop(ctx: click.Context, agent: str) -> None:
     console.print("[yellow]Agent stopping not yet implemented[/yellow]")
 
 
-@cli.command()
-@click.option(
+@cli.command()  # type: ignore[misc]
+@click.option(  # type: ignore[misc]
     "--tail",
     "-n",
     type=int,
     default=50,
     help="Number of log lines to show",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--follow",
     "-f",
     is_flag=True,
     help="Follow log output",
 )
-@click.option(
+@click.option(  # type: ignore[misc]
     "--agent",
     "-a",
     type=click.Choice(["issue_reader", "coder", "reviewer", "all"]),
     default="all",
     help="Filter logs by agent type",
 )
-@click.pass_context
+@click.pass_context  # type: ignore[misc]
 @handle_errors
 def logs(
     ctx: click.Context,
