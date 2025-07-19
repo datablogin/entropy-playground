@@ -144,11 +144,11 @@ class TestStructuredLogging:
                 # On Windows, wait a moment for file system to settle
                 import time
                 time.sleep(0.1)
-                
+
                 log_files = list(Path(temp_dir).glob("entropy-playground.log*"))
                 # Should have at least the main log file
                 assert len(log_files) >= 1
-                
+
                 # If rotation occurred, we should have backup files
                 # Check if the main log file exists and has been written to
                 main_log = Path(temp_dir) / "entropy-playground.log"
