@@ -4,6 +4,8 @@ from pathlib import Path
 
 import pytest
 
+from entropy_playground.logging.logger import cleanup_logging_handlers
+
 
 @pytest.fixture
 def project_root():
@@ -30,3 +32,11 @@ redis:
 """
     )
     return config_file
+
+
+@pytest.fixture(autouse=True)
+def cleanup_logging():
+    """Automatically clean up logging handlers after each test."""
+    yield
+    # Clean up after test to prevent Windows file locking issues
+    cleanup_logging_handlers()

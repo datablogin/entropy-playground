@@ -24,6 +24,7 @@ from entropy_playground.logging.logger import (
     LogContext,
     add_agent_metadata,
     add_timestamp,
+    cleanup_logging_handlers,
     get_logger,
     setup_logging,
 )
@@ -53,80 +54,94 @@ class TestStructuredLogging:
     def test_setup_logging_with_file(self):
         """Test logging setup with file logging."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            setup_logging(
-                level="INFO",
-                log_dir=temp_dir,
-                enable_file_logging=True,
-            )
+            try:
+                setup_logging(
+                    level="INFO",
+                    log_dir=temp_dir,
+                    enable_file_logging=True,
+                )
 
-            logger = get_logger("test")
-            logger.info("test message", key="value")
+                logger = get_logger("test")
+                logger.info("test message", key="value")
 
-            # Verify log file was created
-            log_file = Path(temp_dir) / "entropy-playground.log"
-            assert log_file.exists()
+                # Verify log file was created
+                log_file = Path(temp_dir) / "entropy-playground.log"
+                assert log_file.exists()
 
-            # Verify log content
-            with open(log_file) as f:
-                content = f.read()
-                assert "test message" in content
-                assert "key" in content
+                # Verify log content
+                with open(log_file) as f:
+                    content = f.read()
+                    assert "test message" in content
+                    assert "key" in content
+            finally:
+                # Clean up handlers to prevent Windows file locking
+                cleanup_logging_handlers()
 
     def test_json_formatting_in_production(self, monkeypatch):
         """Test JSON formatting in production mode."""
         monkeypatch.setenv("ENTROPY_ENV", "production")
 
         with tempfile.TemporaryDirectory() as temp_dir:
-            setup_logging(log_dir=temp_dir)
+            try:
+                setup_logging(log_dir=temp_dir)
 
-            logger = get_logger("test")
-            logger.info("test message", number=42, flag=True)
+                logger = get_logger("test")
+                logger.info("test message", number=42, flag=True)
 
-            # Read and parse log file
-            log_file = Path(temp_dir) / "entropy-playground.log"
-            with open(log_file) as f:
-                line = f.readline()
-                data = json.loads(line)
+                # Read and parse log file
+                log_file = Path(temp_dir) / "entropy-playground.log"
+                with open(log_file) as f:
+                    line = f.readline()
+                    data = json.loads(line)
 
-                assert data["event"] == "test message"
-                assert data["number"] == 42
-                assert data["flag"] is True
-                assert "timestamp" in data
-                assert "logger" in data
+                    assert data["event"] == "test message"
+                    assert data["number"] == 42
+                    assert data["flag"] is True
+                    assert "timestamp" in data
+                    assert "logger" in data
+            finally:
+                # Clean up handlers to prevent Windows file locking
+                cleanup_logging_handlers()
 
     def test_log_rotation(self):
         """Test log file rotation."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            # Setup logging with small max bytes to trigger rotation
-            setup_logging(
-                log_dir=temp_dir,
-                enable_file_logging=True,
-            )
+            try:
+                # Setup logging with small max bytes to trigger rotation
+                setup_logging(
+                    log_dir=temp_dir,
+                    enable_file_logging=True,
+                )
 
-            # Get the root logger and add our small rotation handler
-            import logging
+                # Get the root logger and add our small rotation handler
+                import logging
 
-            from entropy_playground.logging.logger import setup_file_handler
+                from entropy_playground.logging.logger import setup_file_handler
 
-            handler = setup_file_handler(
-                Path(temp_dir),
-                max_bytes=100,  # Very small to trigger rotation
-                backup_count=2,
-            )
-            root_logger = logging.getLogger()
-            root_logger.addHandler(handler)
+                handler = setup_file_handler(
+                    Path(temp_dir),
+                    max_bytes=100,  # Very small to trigger rotation
+                    backup_count=2,
+                )
+                root_logger = logging.getLogger()
+                root_logger.addHandler(handler)
 
-            # Write enough to trigger rotation
-            logger = get_logger("test")
-            for i in range(20):
-                logger.info(f"Message {i}" * 10)  # Long messages
+                # Write enough to trigger rotation
+                logger = get_logger("test")
+                for i in range(20):
+                    logger.info(f"Message {i}" * 10)  # Long messages
 
-            # Force handler to flush
-            handler.flush()
+                # Force handler to flush and close before checking files
+                handler.flush()
+                handler.close()
+                root_logger.removeHandler(handler)
 
-            # Check that backup files were created
-            log_files = list(Path(temp_dir).glob("entropy-playground.log*"))
-            assert len(log_files) > 1
+                # Check that backup files were created
+                log_files = list(Path(temp_dir).glob("entropy-playground.log*"))
+                assert len(log_files) > 1
+            finally:
+                # Clean up all handlers to prevent Windows file locking
+                cleanup_logging_handlers()
 
     def test_logger_with_context(self):
         """Test logger with bound context."""
