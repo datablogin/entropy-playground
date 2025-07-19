@@ -105,6 +105,10 @@ module = [
 ]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = "click.*"
+disallow_untyped_decorators = false
+
 [tool.bandit]
 exclude_dirs = ["tests", ".venv", "venv", ".tox", "build", "dist", ".github"]
 skips = ["B101", "B404", "B603", "B106"]  # Skip assert_used, subprocess, hardcoded_password

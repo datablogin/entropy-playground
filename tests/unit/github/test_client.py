@@ -87,7 +87,7 @@ class TestGitHubClient:
 
         client = GitHubClient()
 
-        mock_github.assert_called_once_with(auth=token, base_url=None)
+        mock_github.assert_called_once_with(token)
         assert client._retry_count == GitHubClient.DEFAULT_RETRY_COUNT
         assert client._retry_delay == GitHubClient.DEFAULT_RETRY_DELAY
 
@@ -98,7 +98,7 @@ class TestGitHubClient:
 
         client = GitHubClient(token=token, base_url=base_url, retry_count=5, retry_delay=2.0)
 
-        mock_github.assert_called_once_with(auth=token, base_url=base_url)
+        mock_github.assert_called_once_with(token, base_url=base_url)
         assert client._retry_count == 5
         assert client._retry_delay == 2.0
 

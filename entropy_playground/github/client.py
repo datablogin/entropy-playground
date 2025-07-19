@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Any
 
 from github import Github, GithubException, RateLimitExceededException
+from github.GithubObject import NotSet
 from github.Issue import Issue
 from github.PullRequest import PullRequest
 from github.Repository import Repository
@@ -50,7 +51,7 @@ class GitHubTokenManager:
         if not any(self._token.startswith(prefix) for prefix in valid_prefixes):
             logger.warning("Token does not match expected GitHub token format")
 
-    def get_token(self) -> str:
+    def get_token(self) -> str | None:
         """Get the GitHub token."""
         return self._token
 
@@ -89,7 +90,12 @@ class GitHubClient:
         self._retry_delay = retry_delay
 
         # Initialize PyGithub client
-        self._github = Github(auth=self._token_manager.get_token(), base_url=base_url)
+        # Use token directly for compatibility with older PyGithub versions
+        token = self._token_manager.get_token()
+        if base_url:
+            self._github = Github(token if token else None, base_url=base_url)
+        else:
+            self._github = Github(token if token else None)
 
         # Track rate limit info
         self._rate_limit_reset: datetime | None = None
@@ -117,7 +123,7 @@ class GitHubClient:
         if wait_time > 0:
             time.sleep(wait_time + 1)  # Add 1 second buffer
 
-    def _retry_operation(self, operation, *args, **kwargs) -> Any:
+    def _retry_operation(self, operation: Any, *args: Any, **kwargs: Any) -> Any:
         """
         Execute an operation with retry logic.
 
@@ -157,7 +163,10 @@ class GitHubClient:
                     time.sleep(delay)
                     delay *= 2  # Exponential backoff
 
-        raise last_exception
+        if last_exception is not None:
+            raise last_exception
+        else:
+            raise RuntimeError("Operation failed with no exception captured")
 
     def get_repository(self, repo_name: str) -> Repository:
         """
@@ -169,7 +178,8 @@ class GitHubClient:
         Returns:
             Repository object
         """
-        return self._retry_operation(self._github.get_repo, repo_name)
+        result: Repository = self._retry_operation(self._github.get_repo, repo_name)
+        return result
 
     def get_issue(self, repo_name: str, issue_number: int) -> Issue:
         """
@@ -183,7 +193,8 @@ class GitHubClient:
             Issue object
         """
         repo = self.get_repository(repo_name)
-        return self._retry_operation(repo.get_issue, issue_number)
+        result: Issue = self._retry_operation(repo.get_issue, issue_number)
+        return result
 
     def list_issues(
         self,
@@ -210,18 +221,19 @@ class GitHubClient:
         """
         repo = self.get_repository(repo_name)
 
-        def _get_issues():
+        def _get_issues() -> list[Issue]:
             return list(
                 repo.get_issues(
                     state=state,
                     labels=labels or [],
-                    assignee=assignee,
+                    assignee=assignee or NotSet,
                     sort=sort,
                     direction=direction,
                 )
             )
 
-        return self._retry_operation(_get_issues)
+        result: list[Issue] = self._retry_operation(_get_issues)
+        return result
 
     def create_issue(
         self,
@@ -245,20 +257,21 @@ class GitHubClient:
             Created Issue object
         """
         repo = self.get_repository(repo_name)
-        return self._retry_operation(
+        result: Issue = self._retry_operation(
             repo.create_issue,
             title=title,
             body=body,
             labels=labels or [],
             assignees=assignees or [],
         )
+        return result
 
     def create_pull_request(
         self,
         repo_name: str,
         title: str,
         body: str | None = None,
-        head: str = None,
+        head: str | None = None,
         base: str = "main",
         draft: bool = False,
     ) -> PullRequest:
@@ -277,9 +290,10 @@ class GitHubClient:
             Created PullRequest object
         """
         repo = self.get_repository(repo_name)
-        return self._retry_operation(
+        result: PullRequest = self._retry_operation(
             repo.create_pull, title=title, body=body, head=head, base=base, draft=draft
         )
+        return result
 
     def get_pull_request(self, repo_name: str, pr_number: int) -> PullRequest:
         """
@@ -293,7 +307,8 @@ class GitHubClient:
             PullRequest object
         """
         repo = self.get_repository(repo_name)
-        return self._retry_operation(repo.get_pull, pr_number)
+        result: PullRequest = self._retry_operation(repo.get_pull, pr_number)
+        return result
 
     def list_pull_requests(
         self,
@@ -320,12 +335,19 @@ class GitHubClient:
         """
         repo = self.get_repository(repo_name)
 
-        def _get_pulls():
+        def _get_pulls() -> list[PullRequest]:
             return list(
-                repo.get_pulls(state=state, sort=sort, direction=direction, base=base, head=head)
+                repo.get_pulls(
+                    state=state,
+                    sort=sort,
+                    direction=direction,
+                    base=base or NotSet,
+                    head=head or NotSet,
+                )
             )
 
-        return self._retry_operation(_get_pulls)
+        result: list[PullRequest] = self._retry_operation(_get_pulls)
+        return result
 
     def get_rate_limit(self) -> dict[str, Any]:
         """

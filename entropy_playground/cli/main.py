@@ -102,7 +102,7 @@ def init(
         version=__version__,
         workspace=workspace,
         redis_url=redis_url,
-        github={"token": "${GITHUB_TOKEN}"},  # Use env var reference
+        github={"token": "${GITHUB_TOKEN}"},  # type: ignore[arg-type]  # Use env var reference
     )
 
     # Save configuration

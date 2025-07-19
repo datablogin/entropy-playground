@@ -1,6 +1,7 @@
 """CLI-specific exceptions and error handling."""
 
-from typing import Any, Callable, Optional, TypeVar
+from collections.abc import Callable
+from typing import Any, TypeVar
 
 import click
 from rich.console import Console
@@ -11,7 +12,7 @@ console = Console()
 class EntropyPlaygroundError(click.ClickException):
     """Base exception for Entropy-Playground CLI errors."""
 
-    def show(self, file: Optional[Any] = None) -> None:
+    def show(self, file: Any | None = None) -> None:
         """Display the error message."""
         console.print(f"[red]Error: {self.format_message()}[/red]")
 

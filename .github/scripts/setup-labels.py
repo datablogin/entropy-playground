@@ -13,14 +13,16 @@ from dotenv import load_dotenv
 from github import Github
 
 
-def load_labels_config():
+def load_labels_config() -> list[dict[str, str]]:
     """Load labels from the labels.yml file."""
     config_path = Path(__file__).parent.parent / "labels.yml"
     with open(config_path) as f:
-        return yaml.safe_load(f)
+        data = yaml.safe_load(f)
+        result: list[dict[str, str]] = data if data is not None else []
+        return result
 
 
-def setup_labels(repo_name=None, token=None):
+def setup_labels(repo_name: str | None = None, token: str | None = None) -> None:
     """Setup labels on the GitHub repository."""
     # Load .env file
     load_dotenv()
@@ -80,7 +82,7 @@ def setup_labels(repo_name=None, token=None):
     print(f"\nSummary: Created {created} labels, updated {updated} labels")
 
 
-def main():
+def main() -> None:
     """Main function."""
     if len(sys.argv) > 2:
         print("Usage: python setup-labels.py [owner/repo]")

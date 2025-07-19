@@ -41,10 +41,10 @@ try:
     HAS_CLOUDWATCH = True
 except ImportError:
     HAS_CLOUDWATCH = False
-    CloudWatchHandler = None
-    CloudWatchLogger = None
-    configure_cloudwatch = None
-    get_cloudwatch_logger = None
+    CloudWatchHandler = None  # type: ignore[assignment, misc]
+    CloudWatchLogger = None  # type: ignore[assignment, misc]
+    configure_cloudwatch = None  # type: ignore[assignment]
+    get_cloudwatch_logger = None  # type: ignore[assignment]
 
 __all__ = [
     # Logger

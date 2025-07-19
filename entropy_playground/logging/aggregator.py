@@ -168,9 +168,12 @@ class LogAggregator:
                             except json.JSONDecodeError:
                                 # Handle non-JSON log lines
                                 # Try to extract basic info
-                                entry = self._parse_text_log(line)
-                                if entry and start_time <= entry.timestamp <= end_time:
-                                    yield entry
+                                parsed_entry = self._parse_text_log(line)
+                                if (
+                                    parsed_entry
+                                    and start_time <= parsed_entry.timestamp <= end_time
+                                ):
+                                    yield parsed_entry
 
                 except Exception as e:
                     self.logger.warning(f"Error reading log file {log_file}: {e}")
@@ -261,7 +264,7 @@ class LogAggregator:
         Returns:
             Dictionary of level -> count
         """
-        counts = defaultdict(int)
+        counts: dict[str, int] = defaultdict(int)
 
         query = LogQuery(start_time=start_time, end_time=end_time)
         for entry in self._iterate_logs(
@@ -286,7 +289,7 @@ class LogAggregator:
         Returns:
             Dictionary of component -> count
         """
-        counts = defaultdict(int)
+        counts: dict[str, int] = defaultdict(int)
 
         query = LogQuery(start_time=start_time, end_time=end_time)
         for entry in self._iterate_logs(

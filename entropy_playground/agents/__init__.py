@@ -6,3 +6,19 @@ This module contains the implementation of various AI agent roles including:
 - Coder Agent
 - Reviewer Agent
 """
+
+from entropy_playground.agents.base import (
+    AgentConfig,
+    AgentHealth,
+    AgentState,
+    BaseAgent,
+    HealthStatus,
+)
+
+__all__ = [
+    "BaseAgent",
+    "AgentConfig",
+    "AgentState",
+    "AgentHealth",
+    "HealthStatus",
+]

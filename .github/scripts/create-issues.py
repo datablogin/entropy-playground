@@ -13,7 +13,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 
-def parse_issues_file(filepath):
+def parse_issues_file(filepath: Path) -> list[dict[str, str]]:
     """Parse ISSUES.md file and extract issue information."""
     with open(filepath) as f:
         content = f.read()
@@ -35,7 +35,7 @@ def parse_issues_file(filepath):
     return issues
 
 
-def create_issue_with_gh(repo, title, body, labels):
+def create_issue_with_gh(repo: str, title: str, body: str, labels: str) -> tuple[bool, str]:
     """Create a GitHub issue using gh CLI."""
     cmd = [
         "gh",
@@ -59,7 +59,7 @@ def create_issue_with_gh(repo, title, body, labels):
         return False, e.stderr
 
 
-def main():
+def main() -> None:
     """Main function."""
     # Load .env file
     load_dotenv()
@@ -78,7 +78,7 @@ def main():
     if len(args) == 1:
         repo = args[0]
     else:
-        repo = os.environ.get("GITHUB_REPO")
+        repo = os.environ.get("GITHUB_REPO", "")
         if not repo:
             print("Error: Repository not specified. Set GITHUB_REPO in .env or pass as argument.")
             sys.exit(1)
