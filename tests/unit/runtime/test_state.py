@@ -14,7 +14,7 @@ from entropy_playground.runtime.state import AgentState, StateManager
 def config():
     """Create test configuration."""
     from entropy_playground.infrastructure.config import GitHubConfig
-    
+
     return Config(
         github=GitHubConfig(token="test-token"),
         redis_url="redis://localhost:6379/0",

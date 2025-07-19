@@ -6,9 +6,10 @@ across the distributed system.
 """
 
 import json
+from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Callable, Iterator
+from typing import Any
 
 import redis
 from redis import ConnectionPool, Redis
@@ -177,7 +178,7 @@ class StateManager:
             True if successful
         """
         try:
-            serialized = {str(k): json.dumps(v) for k, v in mapping.items()}
+            serialized = {k: json.dumps(v) for k, v in mapping.items()}
             return bool(self.client.mset(serialized))
         except (TypeError, ValueError) as e:
             logger.error("state_set_many_serialize_error", error=str(e))
