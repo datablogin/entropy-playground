@@ -100,7 +100,7 @@ class TestInitCommand:
                 config = yaml.safe_load(f)
 
             assert config["version"] == __version__
-            assert config["workspace"] == str(workspace)
+            assert config["workspace"] == workspace.as_posix()
             assert config["redis_url"] == "redis://test:6379"
             assert config["github"]["token"] == "${GITHUB_TOKEN}"
 
