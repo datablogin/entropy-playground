@@ -516,4 +516,3 @@ class AgentState:
         if len(history) > 100:
             history = history[-100:]
         return self.state_manager.set(key, history)
-

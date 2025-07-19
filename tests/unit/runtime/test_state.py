@@ -459,4 +459,3 @@ class TestAgentState:
         saved_history = json.loads(call_args[1])
         assert len(saved_history) == 100
         assert saved_history[-1]["event"] == "new_event"
-
