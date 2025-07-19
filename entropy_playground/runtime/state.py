@@ -6,10 +6,10 @@ across the distributed system.
 """
 
 import json
-from collections.abc import Callable, Iterator
+from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any
+from typing import Any, Union, cast
 
 import redis
 from redis import ConnectionPool, Redis
@@ -179,7 +179,12 @@ class StateManager:
         """
         try:
             serialized = {k: json.dumps(v) for k, v in mapping.items()}
-            return bool(self.client.mset(serialized))
+            # Type cast for redis compatibility
+            return bool(
+                self.client.mset(
+                    cast(Mapping[Union[str, bytes], Union[bytes, float, int, str]], serialized)
+                )
+            )
         except (TypeError, ValueError) as e:
             logger.error("state_set_many_serialize_error", error=str(e))
             raise
