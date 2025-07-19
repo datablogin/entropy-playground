@@ -49,7 +49,9 @@ class ClaudeResponse(BaseModel):
 class ClaudeError(Exception):
     """Custom exception for Claude API errors."""
 
-    def __init__(self, message: str, status_code: int | None = None, response_body: str | None = None):
+    def __init__(
+        self, message: str, status_code: int | None = None, response_body: str | None = None
+    ):
         super().__init__(message)
         self.status_code = status_code
         self.response_body = response_body
@@ -80,7 +82,9 @@ class ClaudeClient:
         """
         self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
         if not self.api_key:
-            raise ValueError("API key must be provided or set in ANTHROPIC_API_KEY environment variable")
+            raise ValueError(
+                "API key must be provided or set in ANTHROPIC_API_KEY environment variable"
+            )
 
         self.base_url = base_url or self.BASE_URL
         self.timeout = timeout or self.DEFAULT_TIMEOUT
@@ -179,7 +183,9 @@ class ClaudeClient:
 
         for attempt in range(self.max_retries):
             try:
-                logger.debug(f"Making Claude API request (attempt {attempt + 1}/{self.max_retries})")
+                logger.debug(
+                    f"Making Claude API request (attempt {attempt + 1}/{self.max_retries})"
+                )
 
                 response = await self._client.post(
                     "/messages",
@@ -193,7 +199,9 @@ class ClaudeClient:
 
                     # Handle rate limiting
                     if response.status_code == 429:
-                        retry_after = response.headers.get("retry-after", self.RETRY_DELAY * (attempt + 1))
+                        retry_after = response.headers.get(
+                            "retry-after", self.RETRY_DELAY * (attempt + 1)
+                        )
                         logger.warning(f"Rate limited, retrying after {retry_after}s")
                         await asyncio.sleep(float(retry_after))
                         continue
@@ -212,7 +220,9 @@ class ClaudeClient:
                 # Update usage tracking
                 self._update_usage(claude_response.usage)
 
-                total_tokens = claude_response.usage.get("input_tokens", 0) + claude_response.usage.get("output_tokens", 0)
+                total_tokens = claude_response.usage.get(
+                    "input_tokens", 0
+                ) + claude_response.usage.get("output_tokens", 0)
                 logger.info(f"Claude API request successful (tokens: {total_tokens})")
                 return claude_response
 
@@ -314,10 +324,13 @@ class MockClaudeClient(ClaudeClient):
             "content": [{"type": "text", "text": content}],
             "model": kwargs.get("model", "claude-3-opus-20240229"),
             "stop_reason": kwargs.get("stop_reason", "end_turn"),
-            "usage": kwargs.get("usage", {
-                "input_tokens": 10,
-                "output_tokens": 20,
-            }),
+            "usage": kwargs.get(
+                "usage",
+                {
+                    "input_tokens": 10,
+                    "output_tokens": 20,
+                },
+            ),
         }
         self._mock_responses.append(response)
 

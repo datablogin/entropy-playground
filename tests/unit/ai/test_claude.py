@@ -198,9 +198,7 @@ class TestClaudeClient:
     @pytest.mark.asyncio
     async def test_timeout_error(self, mock_client):
         """Test timeout error handling."""
-        mock_client.return_value.post = AsyncMock(
-            side_effect=httpx.TimeoutException("Timeout")
-        )
+        mock_client.return_value.post = AsyncMock(side_effect=httpx.TimeoutException("Timeout"))
         mock_client.return_value.aclose = AsyncMock()
 
         client = ClaudeClient(api_key="test-key")
@@ -234,9 +232,7 @@ class TestClaudeClient:
         """Test response validation error."""
         mock_response = Mock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
-            "invalid": "response"
-        }
+        mock_response.json.return_value = {"invalid": "response"}
 
         mock_client.return_value.post = AsyncMock(return_value=mock_response)
         mock_client.return_value.aclose = AsyncMock()

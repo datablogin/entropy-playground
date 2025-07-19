@@ -117,15 +117,15 @@ class IssueReaderPromptStrategy(BasePromptStrategy):
                 "{\n"
                 '  "summary": "Brief issue summary",\n'
                 '  "tasks": [\n'
-                '    {\n'
+                "    {\n"
                 '      "id": "task-1",\n'
                 '      "description": "Task description",\n'
                 '      "type": "implementation|test|documentation",\n'
                 '      "complexity": "simple|medium|complex",\n'
                 '      "assigned_to": "coder|reviewer",\n'
                 '      "dependencies": ["task-id"]\n'
-                '    }\n'
-                '  ],\n'
+                "    }\n"
+                "  ],\n"
                 '  "prerequisites": ["List of prerequisites"],\n'
                 '  "estimated_effort": "hours or days"\n'
                 "}\n"
@@ -316,16 +316,20 @@ def create_conversation(
 
     # Add conversation history
     for msg in messages:
-        conversation.append({
-            "role": msg.get("role", "user"),
-            "content": msg.get("content", ""),
-        })
+        conversation.append(
+            {
+                "role": msg.get("role", "user"),
+                "content": msg.get("content", ""),
+            }
+        )
 
     # Add task prompt if provided
     if task_prompt:
-        conversation.append({
-            "role": "user",
-            "content": task_prompt,
-        })
+        conversation.append(
+            {
+                "role": "user",
+                "content": task_prompt,
+            }
+        )
 
     return conversation
