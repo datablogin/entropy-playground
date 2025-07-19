@@ -107,7 +107,8 @@ class Config(BaseModel):
 
         # Convert to dict and handle Path objects
         data = self.model_dump()
-        data["workspace"] = str(self.workspace)
+        # Use as_posix() to ensure consistent forward slashes across platforms
+        data["workspace"] = self.workspace.as_posix()
 
         with open(config_path, "w") as f:
             yaml.dump(data, f, default_flow_style=False)

@@ -88,8 +88,10 @@ def setup_logging(
     root_logger = logging.getLogger()
     root_logger.setLevel(getattr(logging, level.upper(), logging.INFO))
 
-    # Clear existing handlers
-    root_logger.handlers.clear()
+    # Close and clear existing handlers to prevent file locking issues
+    for handler in root_logger.handlers[:]:  # Create a copy to iterate safely
+        handler.close()
+        root_logger.removeHandler(handler)
 
     # Add console handler
     console_handler = logging.StreamHandler(sys.stdout)
@@ -178,6 +180,14 @@ class LogContext:
                 self.logger._context[key] = self.previous_context[key]
             else:
                 self.logger._context.pop(key, None)
+
+
+def cleanup_logging_handlers() -> None:
+    """Cleanup all logging handlers - useful for tests."""
+    root_logger = logging.getLogger()
+    for handler in root_logger.handlers[:]:
+        handler.close()
+        root_logger.removeHandler(handler)
 
 
 # Initialize logging on module import
