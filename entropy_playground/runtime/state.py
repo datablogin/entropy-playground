@@ -181,9 +181,7 @@ class StateManager:
             serialized = {k: json.dumps(v) for k, v in mapping.items()}
             # Type cast for redis compatibility
             return bool(
-                self.client.mset(
-                    cast(Mapping[str | bytes, bytes | float | int | str], serialized)
-                )
+                self.client.mset(cast(Mapping[str | bytes, bytes | float | int | str], serialized))
             )
         except (TypeError, ValueError) as e:
             logger.error("state_set_many_serialize_error", error=str(e))
