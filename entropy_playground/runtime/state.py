@@ -9,7 +9,7 @@ import json
 from collections.abc import Callable, Iterator, Mapping
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Union, cast
+from typing import Any, cast
 
 import redis
 from redis import ConnectionPool, Redis
@@ -182,7 +182,7 @@ class StateManager:
             # Type cast for redis compatibility
             return bool(
                 self.client.mset(
-                    cast(Mapping[Union[str, bytes], Union[bytes, float, int, str]], serialized)
+                    cast(Mapping[str | bytes, bytes | float | int | str], serialized)
                 )
             )
         except (TypeError, ValueError) as e:
