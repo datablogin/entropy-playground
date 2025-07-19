@@ -143,6 +143,7 @@ class TestStructuredLogging:
                 # Check that backup files were created
                 # On Windows, wait a moment for file system to settle
                 import time
+
                 time.sleep(0.1)
 
                 log_files = list(Path(temp_dir).glob("entropy-playground.log*"))
