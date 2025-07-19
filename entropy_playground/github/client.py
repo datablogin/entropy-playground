@@ -92,7 +92,10 @@ class GitHubClient:
         # Initialize PyGithub client
         # Use token directly for compatibility with older PyGithub versions
         token = self._token_manager.get_token()
-        self._github = Github(token if token else None)
+        if base_url:
+            self._github = Github(token if token else None, base_url=base_url)
+        else:
+            self._github = Github(token if token else None)
 
         # Track rate limit info
         self._rate_limit_reset: datetime | None = None

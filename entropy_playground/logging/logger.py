@@ -151,7 +151,7 @@ def get_logger(name: str, **context: Any) -> structlog.stdlib.BoundLogger:
     logger = structlog.get_logger(name)
     if context:
         logger = logger.bind(**context)
-    return logger
+    return logger  # type: ignore[no-any-return]
 
 
 class LogContext:
