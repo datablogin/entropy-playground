@@ -39,3 +39,9 @@ variable "single_nat_gateway" {
   type        = bool
   default     = true
 }
+
+variable "alb_ingress_cidrs" {
+  description = "CIDR blocks allowed to access the Application Load Balancer"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}

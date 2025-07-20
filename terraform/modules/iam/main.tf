@@ -170,3 +170,121 @@ resource "aws_iam_instance_profile" "agent" {
 # Data sources
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
+
+# ECS Task Execution Role
+resource "aws_iam_role" "ecs_execution" {
+  name = "${var.project_name}-${var.environment}-ecs-execution-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-ecs-execution-role"
+  }
+}
+
+# ECS Task Role
+resource "aws_iam_role" "ecs_task" {
+  name = "${var.project_name}-${var.environment}-ecs-task-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ecs-tasks.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name = "${var.project_name}-${var.environment}-ecs-task-role"
+  }
+}
+
+# Attach AWS managed policy for ECS task execution
+resource "aws_iam_role_policy_attachment" "ecs_execution_policy" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+# Additional policy for ECS execution role to read secrets
+resource "aws_iam_policy" "ecs_execution_secrets" {
+  name        = "${var.project_name}-${var.environment}-ecs-execution-secrets-policy"
+  description = "Policy for ECS execution role to read secrets"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "ssm:GetParameters",
+          "ssm:GetParameter"
+        ]
+        Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.project_name}/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "secretsmanager:GetSecretValue"
+        ]
+        Resource = "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.project_name}/*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "kms:Decrypt"
+        ]
+        Resource = "*"
+        Condition = {
+          StringEquals = {
+            "kms:ViaService" = [
+              "ssm.${data.aws_region.current.name}.amazonaws.com",
+              "secretsmanager.${data.aws_region.current.name}.amazonaws.com"
+            ]
+          }
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_execution_secrets" {
+  role       = aws_iam_role.ecs_execution.name
+  policy_arn = aws_iam_policy.ecs_execution_secrets.arn
+}
+
+# Attach existing policies to ECS task role
+resource "aws_iam_role_policy_attachment" "ecs_task_s3" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.agent_s3.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_cloudwatch" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.agent_cloudwatch.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ssm" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.agent_ssm.arn
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_task_ecr" {
+  role       = aws_iam_role.ecs_task.name
+  policy_arn = aws_iam_policy.agent_ecr.arn
+}

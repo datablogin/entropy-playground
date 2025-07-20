@@ -96,6 +96,131 @@ variable "s3_lifecycle_days" {
   default     = 30
 }
 
+# ECS/Fargate Variables
+variable "use_fargate" {
+  description = "Use ECS/Fargate instead of EC2 instances"
+  type        = bool
+  default     = false
+}
+
+variable "agent_container_image" {
+  description = "Docker image for the agent container"
+  type        = string
+  default     = ""
+}
+
+variable "agent_task_cpu" {
+  description = "CPU units for ECS task (256, 512, 1024, 2048, 4096)"
+  type        = string
+  default     = "512"
+}
+
+variable "agent_task_memory" {
+  description = "Memory for ECS task in MB"
+  type        = string
+  default     = "1024"
+}
+
+variable "agent_desired_count" {
+  description = "Desired number of ECS tasks"
+  type        = number
+  default     = 2
+}
+
+variable "log_level" {
+  description = "Application log level"
+  type        = string
+  default     = "INFO"
+}
+
+variable "redis_url" {
+  description = "Redis connection URL (if not using ElastiCache)"
+  type        = string
+  default     = ""
+}
+
+variable "ecs_secrets" {
+  description = "Secrets to inject from AWS Parameter Store"
+  type = list(object({
+    name      = string
+    valueFrom = string
+  }))
+  default = []
+}
+
+variable "enable_ecs_health_check" {
+  description = "Enable ECS container health check"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ecs_load_balancer" {
+  description = "Enable Application Load Balancer for ECS"
+  type        = bool
+  default     = false
+}
+
+variable "enable_ecs_service_discovery" {
+  description = "Enable AWS Service Discovery for ECS"
+  type        = bool
+  default     = true
+}
+
+variable "enable_ecs_autoscaling" {
+  description = "Enable auto-scaling for ECS service"
+  type        = bool
+  default     = true
+}
+
+variable "ecs_min_capacity" {
+  description = "Minimum number of ECS tasks"
+  type        = number
+  default     = 1
+}
+
+variable "ecs_max_capacity" {
+  description = "Maximum number of ECS tasks"
+  type        = number
+  default     = 10
+}
+
+variable "ecs_cpu_target" {
+  description = "Target CPU utilization for auto-scaling"
+  type        = number
+  default     = 70
+}
+
+variable "ecs_memory_target" {
+  description = "Target memory utilization for auto-scaling"
+  type        = number
+  default     = 80
+}
+
+# Redis/ElastiCache Variables
+variable "enable_redis" {
+  description = "Enable ElastiCache Redis"
+  type        = bool
+  default     = true
+}
+
+variable "redis_node_type" {
+  description = "ElastiCache node type"
+  type        = string
+  default     = "cache.t3.micro"
+}
+
+variable "redis_num_nodes" {
+  description = "Number of ElastiCache nodes"
+  type        = number
+  default     = 1
+}
+
+variable "redis_engine_version" {
+  description = "Redis engine version"
+  type        = string
+  default     = "7.0"
+}
+
 # Tags
 variable "additional_tags" {
   description = "Additional tags to apply to resources"
