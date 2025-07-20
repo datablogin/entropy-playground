@@ -127,30 +127,30 @@ show_service_status() {
         --services "$SERVICE_NAME" \
         --region "$AWS_REGION" \
         --output json 2>/dev/null)
-    
+
     if [[ -z "$service_info" ]]; then
         log_error "Could not find service: $SERVICE_NAME"
         return 1
     fi
-    
+
     # Extract service details
     local status=$(echo "$service_info" | jq -r '.services[0].status')
     local desired_count=$(echo "$service_info" | jq -r '.services[0].desiredCount')
     local running_count=$(echo "$service_info" | jq -r '.services[0].runningCount')
     local pending_count=$(echo "$service_info" | jq -r '.services[0].pendingCount')
     local task_definition=$(echo "$service_info" | jq -r '.services[0].taskDefinition' | grep -oE '[^/]+$')
-    
+
     echo -e "\n${BLUE}=== ECS Service Status ===${NC}"
     echo "Cluster: $CLUSTER_NAME"
     echo "Service: $SERVICE_NAME"
     echo "Status: $(format_status "$status")"
     echo "Task Definition: $task_definition"
     echo -e "Tasks: ${GREEN}$running_count${NC} running / ${YELLOW}$pending_count${NC} pending / $desired_count desired"
-    
+
     # Show recent events
     echo -e "\n${BLUE}Recent Events:${NC}"
-    echo "$service_info" | jq -r '.services[0].events[0:5][] | 
-        "\(.createdAt | strftime("%Y-%m-%d %H:%M:%S")) - \(.message)"' | 
+    echo "$service_info" | jq -r '.services[0].events[0:5][] |
+        "\(.createdAt | strftime("%Y-%m-%d %H:%M:%S")) - \(.message)"' |
         while IFS= read -r line; do
             echo "  $line"
         done
@@ -159,25 +159,25 @@ show_service_status() {
 # Function to display task details
 show_tasks() {
     echo -e "\n${BLUE}=== ECS Tasks ===${NC}"
-    
+
     local tasks=$(aws ecs list-tasks \
         --cluster "$CLUSTER_NAME" \
         --service-name "$SERVICE_NAME" \
         --region "$AWS_REGION" \
         --output json | jq -r '.taskArns[]')
-    
+
     if [[ -z "$tasks" ]]; then
         echo "No running tasks found"
         return
     fi
-    
+
     local task_details=$(aws ecs describe-tasks \
         --cluster "$CLUSTER_NAME" \
         --tasks $tasks \
         --region "$AWS_REGION" \
         --output json)
-    
-    echo "$task_details" | jq -r '.tasks[] | 
+
+    echo "$task_details" | jq -r '.tasks[] |
         "Task: \(.taskArn | split("/") | last)
         Status: \(.lastStatus)
         Health: \(.healthStatus // "N/A")
@@ -192,7 +192,7 @@ show_tasks() {
 # Function to show logs
 show_logs() {
     echo -e "\n${BLUE}=== Recent Logs ===${NC}"
-    
+
     # Get recent log streams
     local streams=$(aws logs describe-log-streams \
         --log-group-name "$LOG_GROUP" \
@@ -201,20 +201,20 @@ show_logs() {
         --max-items 1 \
         --region "$AWS_REGION" \
         --output json 2>/dev/null | jq -r '.logStreams[0].logStreamName // empty')
-    
+
     if [[ -z "$streams" ]]; then
         echo "No log streams found"
         return
     fi
-    
+
     # Get recent log events
     aws logs filter-log-events \
         --log-group-name "$LOG_GROUP" \
         --log-stream-names "$streams" \
         --max-items 20 \
         --region "$AWS_REGION" \
-        --output json | jq -r '.events[] | 
-        "\(.timestamp | ./1000 | strftime("%Y-%m-%d %H:%M:%S")) \(.message)"' | 
+        --output json | jq -r '.events[] |
+        "\(.timestamp | ./1000 | strftime("%Y-%m-%d %H:%M:%S")) \(.message)"' |
         while IFS= read -r line; do
             echo "$line"
         done
@@ -223,10 +223,10 @@ show_logs() {
 # Function to show metrics
 show_metrics() {
     echo -e "\n${BLUE}=== CloudWatch Metrics (Last Hour) ===${NC}"
-    
+
     local end_time=$(date -u +%Y-%m-%dT%H:%M:%S)
     local start_time=$(date -u -d '1 hour ago' +%Y-%m-%dT%H:%M:%S)
-    
+
     # CPU Utilization
     local cpu_stats=$(aws cloudwatch get-metric-statistics \
         --namespace AWS/ECS \
@@ -238,11 +238,11 @@ show_metrics() {
         --statistics Average,Maximum \
         --region "$AWS_REGION" \
         --output json)
-    
+
     echo -e "\nCPU Utilization:"
-    echo "$cpu_stats" | jq -r '.Datapoints | sort_by(.Timestamp) | .[-5:][] | 
+    echo "$cpu_stats" | jq -r '.Datapoints | sort_by(.Timestamp) | .[-5:][] |
         "  \(.Timestamp | strftime("%H:%M")) - Avg: \(.Average | tostring | .[0:5])% Max: \(.Maximum | tostring | .[0:5])%"'
-    
+
     # Memory Utilization
     local memory_stats=$(aws cloudwatch get-metric-statistics \
         --namespace AWS/ECS \
@@ -254,9 +254,9 @@ show_metrics() {
         --statistics Average,Maximum \
         --region "$AWS_REGION" \
         --output json)
-    
+
     echo -e "\nMemory Utilization:"
-    echo "$memory_stats" | jq -r '.Datapoints | sort_by(.Timestamp) | .[-5:][] | 
+    echo "$memory_stats" | jq -r '.Datapoints | sort_by(.Timestamp) | .[-5:][] |
         "  \(.Timestamp | strftime("%H:%M")) - Avg: \(.Average | tostring | .[0:5])% Max: \(.Maximum | tostring | .[0:5])%"'
 }
 
@@ -284,17 +284,17 @@ monitor() {
     echo -e "${BLUE}ECS Monitor - ${ENVIRONMENT} Environment${NC}"
     echo "Time: $(date)"
     echo "Region: $AWS_REGION"
-    
+
     show_service_status
-    
+
     if [[ "$SHOW_TASKS" == "true" ]]; then
         show_tasks
     fi
-    
+
     if [[ "$SHOW_LOGS" == "true" ]]; then
         show_logs
     fi
-    
+
     if [[ "$SHOW_METRICS" == "true" ]]; then
         show_metrics
     fi

@@ -12,7 +12,7 @@ The ECS/Fargate deployment provides a serverless container orchestration solutio
 
 ## Architecture
 
-```
+```text
 ┌─────────────────┐     ┌─────────────────┐
 │   ECS Cluster   │     │  ElastiCache    │
 │                 │     │     Redis       │

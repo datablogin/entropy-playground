@@ -113,7 +113,7 @@ module "ecs" {
   # Configuration
   log_level = var.log_level
   redis_url = var.redis_url != "" ? var.redis_url : "redis://${module.elasticache[0].primary_endpoint}:6379"
-  
+
   # Secrets from Parameter Store
   secrets_from_parameter_store = var.ecs_secrets
 

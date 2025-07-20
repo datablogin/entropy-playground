@@ -148,7 +148,7 @@ log_info "Current task definition revision: $CURRENT_REVISION"
 # If no target revision specified, show recent revisions
 if [[ -z "${TARGET_REVISION:-}" ]]; then
     log_info "Fetching recent task definition revisions..."
-    
+
     # List recent task definitions
     REVISIONS=$(aws ecs list-task-definitions \
         --family-prefix "$TASK_FAMILY" \
@@ -156,24 +156,24 @@ if [[ -z "${TARGET_REVISION:-}" ]]; then
         --sort DESC \
         --max-items "$((SHOW_REVISIONS + 1))" \
         --output json | jq -r '.taskDefinitionArns[]')
-    
+
     echo
     echo "Recent task definition revisions:"
     echo "================================="
-    
+
     while IFS= read -r arn; do
         REVISION=$(echo "$arn" | grep -oE '[0-9]+$')
-        
+
         # Get task definition details
         TASK_DEF_INFO=$(aws ecs describe-task-definition \
             --task-definition "$arn" \
             --region "$AWS_REGION" \
             --query 'taskDefinition.{RegisteredAt:registeredAt,Image:containerDefinitions[0].image}' \
             --output json)
-        
+
         REGISTERED_AT=$(echo "$TASK_DEF_INFO" | jq -r '.RegisteredAt')
         IMAGE=$(echo "$TASK_DEF_INFO" | jq -r '.Image')
-        
+
         if [[ "$REVISION" == "$CURRENT_REVISION" ]]; then
             echo -e "${GREEN}► Revision $REVISION (CURRENT)${NC}"
         else
@@ -183,7 +183,7 @@ if [[ -z "${TARGET_REVISION:-}" ]]; then
         echo "    Image: $IMAGE"
         echo
     done <<< "$REVISIONS"
-    
+
     echo
     read -p "Enter revision number to rollback to (or Ctrl+C to cancel): " TARGET_REVISION
 fi
@@ -239,7 +239,7 @@ log_info "Rollback initiated"
 # Wait for rollback if requested
 if [[ "$WAIT_FOR_ROLLBACK" == "true" ]]; then
     log_info "Waiting for rollback to complete..."
-    
+
     if aws ecs wait services-stable \
         --cluster "$CLUSTER_NAME" \
         --services "$SERVICE_NAME" \

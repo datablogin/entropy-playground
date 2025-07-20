@@ -180,7 +180,7 @@ log_info "Service update initiated"
 # Wait for deployment if requested
 if [[ "${WAIT_FOR_DEPLOYMENT:-false}" == "true" ]]; then
     log_info "Waiting for deployment to complete (timeout: ${DEPLOYMENT_TIMEOUT}s)..."
-    
+
     if aws ecs wait services-stable \
         --cluster "$CLUSTER_NAME" \
         --services "$SERVICE_NAME" \
@@ -189,7 +189,7 @@ if [[ "${WAIT_FOR_DEPLOYMENT:-false}" == "true" ]]; then
         log_info "Deployment completed successfully!"
     else
         log_error "Deployment failed or timed out"
-        
+
         # Get deployment events for debugging
         log_warning "Recent deployment events:"
         aws ecs describe-services \
@@ -198,7 +198,7 @@ if [[ "${WAIT_FOR_DEPLOYMENT:-false}" == "true" ]]; then
             --region "$AWS_REGION" \
             --query 'services[0].events[0:5]' \
             --output table
-        
+
         exit 1
     fi
 else

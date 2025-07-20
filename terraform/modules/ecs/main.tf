@@ -26,7 +26,7 @@ resource "aws_ecs_task_definition" "agent" {
     {
       name  = "agent"
       image = var.agent_image
-      
+
       environment = [
         {
           name  = "ENVIRONMENT"
@@ -41,9 +41,9 @@ resource "aws_ecs_task_definition" "agent" {
           value = var.redis_url
         }
       ]
-      
+
       secrets = var.secrets_from_parameter_store
-      
+
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -52,14 +52,14 @@ resource "aws_ecs_task_definition" "agent" {
           "awslogs-stream-prefix" = "agent"
         }
       }
-      
+
       portMappings = var.enable_health_check ? [
         {
           containerPort = 8080
           protocol      = "tcp"
         }
       ] : []
-      
+
       healthCheck = var.enable_health_check ? {
         command     = ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
         interval    = 30

@@ -41,7 +41,7 @@ module "ecs" {
   # Configuration
   log_level = "INFO"
   redis_url = "redis://redis.example.com:6379"
-  
+
   # Secrets from Parameter Store
   secrets_from_parameter_store = [
     {
