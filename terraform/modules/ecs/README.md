@@ -116,19 +116,25 @@ module "ecs" {
 The module includes helper scripts in the `scripts/ecs/` directory:
 
 ### deploy.sh
+
 Deploys new versions of the application to ECS:
+
 ```bash
 ./scripts/ecs/deploy.sh -e prod -t v1.0.0 -w
 ```
 
 ### rollback.sh
+
 Rolls back to a previous task definition revision:
+
 ```bash
 ./scripts/ecs/rollback.sh -e prod -v 42 -w
 ```
 
 ### monitor.sh
+
 Monitors ECS services and tasks:
+
 ```bash
 ./scripts/ecs/monitor.sh -e prod -t -l -m -w
 ```
@@ -138,13 +144,17 @@ Monitors ECS services and tasks:
 The ECS tasks require two IAM roles:
 
 ### Execution Role
+
 The execution role needs permissions to:
+
 - Pull images from ECR
 - Create CloudWatch log streams
 - Read secrets from Parameter Store/Secrets Manager
 
 ### Task Role
+
 The task role needs permissions based on your application requirements:
+
 - Access to S3 buckets
 - Access to other AWS services
 - GitHub API access (if stored in Parameter Store)

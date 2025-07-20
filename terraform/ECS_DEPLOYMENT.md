@@ -5,6 +5,7 @@ This guide explains how to deploy the Entropy-Playground agents using AWS ECS wi
 ## Overview
 
 The ECS/Fargate deployment provides a serverless container orchestration solution that:
+
 - Automatically manages infrastructure
 - Scales based on demand
 - Provides zero-downtime deployments
@@ -61,6 +62,7 @@ aws ssm put-parameter \
 ### 3. Configure Terraform Variables
 
 Copy the example file and update values:
+
 ```bash
 cp environments/dev/terraform.tfvars.ecs.example environments/dev/terraform.tfvars
 # Edit the file with your values
@@ -161,12 +163,14 @@ enable_ecs_service_discovery = true
 ### CloudWatch Logs
 
 Logs are automatically sent to CloudWatch:
+
 - Log Group: `/ecs/entropy-playground-{env}/agent`
 - Log retention: 7 days (configurable)
 
 ### CloudWatch Metrics
 
 Available metrics:
+
 - CPU Utilization
 - Memory Utilization
 - Task Count
