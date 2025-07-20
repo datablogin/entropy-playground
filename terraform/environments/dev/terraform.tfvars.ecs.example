@@ -1,0 +1,63 @@
+# Example Terraform variables for dev environment using ECS/Fargate
+
+# Basic Configuration
+project_name = "entropy-playground"
+environment  = "dev"
+aws_region   = "us-east-1"
+
+# VPC Configuration
+vpc_cidr           = "10.0.0.0/16"
+availability_zones = ["us-east-1a", "us-east-1b"]
+private_subnets    = ["10.0.1.0/24", "10.0.2.0/24"]
+public_subnets     = ["10.0.101.0/24", "10.0.102.0/24"]
+enable_nat_gateway = true
+single_nat_gateway = true
+
+# ECS/Fargate Configuration
+use_fargate = true
+
+# Container Configuration
+agent_container_image = "123456789012.dkr.ecr.us-east-1.amazonaws.com/entropy-playground:latest"
+agent_task_cpu        = "512"
+agent_task_memory     = "1024"
+agent_desired_count   = 2
+
+# Application Configuration
+log_level = "INFO"
+
+# ECS Secrets from Parameter Store
+ecs_secrets = [
+  {
+    name      = "GITHUB_TOKEN"
+    valueFrom = "arn:aws:ssm:us-east-1:123456789012:parameter/entropy-playground/dev/github-token"
+  }
+]
+
+# ECS Features
+enable_ecs_health_check      = true
+enable_ecs_load_balancer     = false  # Set to true for web-facing services
+enable_ecs_service_discovery = true
+enable_ecs_autoscaling       = true
+
+# Auto-scaling Configuration
+ecs_min_capacity    = 1
+ecs_max_capacity    = 5
+ecs_cpu_target      = 70
+ecs_memory_target   = 80
+
+# Redis Configuration
+enable_redis         = true
+redis_node_type      = "cache.t3.micro"
+redis_num_nodes      = 1
+redis_engine_version = "7.0"
+
+# S3 Configuration
+s3_force_destroy   = true  # Only for dev environments
+s3_lifecycle_days  = 7
+
+# Tags
+additional_tags = {
+  Owner       = "DevOps Team"
+  CostCenter  = "Engineering"
+  Terraform   = "true"
+}

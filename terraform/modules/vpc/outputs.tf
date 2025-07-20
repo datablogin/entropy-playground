@@ -28,6 +28,16 @@ output "agent_security_group_id" {
   value       = aws_security_group.agent.id
 }
 
+output "alb_security_group_id" {
+  description = "ID of the security group for Application Load Balancer"
+  value       = aws_security_group.alb.id
+}
+
+output "redis_security_group_id" {
+  description = "ID of the security group for Redis"
+  value       = aws_security_group.redis.id
+}
+
 output "s3_endpoint_id" {
   description = "ID of the S3 VPC endpoint"
   value       = aws_vpc_endpoint.s3.id

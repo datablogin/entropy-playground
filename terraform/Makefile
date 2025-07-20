@@ -1,6 +1,6 @@
 # Terraform Makefile for Entropy-Playground
 
-.PHONY: help init plan-dev plan-prod apply-dev apply-prod destroy-dev destroy-prod fmt validate clean
+.PHONY: help init plan-dev plan-prod apply-dev apply-prod destroy-dev destroy-prod fmt validate clean deploy-ecs rollback-ecs monitor-ecs
 
 # Default environment
 ENV ?= dev
@@ -17,6 +17,11 @@ help:
 	@echo "  fmt         - Format Terraform files"
 	@echo "  validate    - Validate Terraform configuration"
 	@echo "  clean       - Clean Terraform files"
+	@echo ""
+	@echo "ECS-specific targets:"
+	@echo "  deploy-ecs  - Deploy new version to ECS (ENV=dev|prod TAG=version)"
+	@echo "  rollback-ecs- Rollback ECS to previous version"
+	@echo "  monitor-ecs - Monitor ECS services and tasks"
 
 init:
 	@if [ -f backend.conf ]; then \
@@ -77,3 +82,20 @@ dev-destroy: destroy-dev
 prod-plan: plan-prod
 prod-apply: apply-prod
 prod-destroy: destroy-prod
+
+# ECS deployment targets
+deploy-ecs:
+	@if [ -z "$(TAG)" ]; then \
+		echo "Error: TAG is required. Usage: make deploy-ecs ENV=dev TAG=v1.0.0"; \
+		exit 1; \
+	fi
+	@echo "Deploying to ECS $(ENV) environment with tag $(TAG)..."
+	./scripts/ecs/deploy.sh -e $(ENV) -t $(TAG) -w
+
+rollback-ecs:
+	@echo "Rolling back ECS $(ENV) environment..."
+	./scripts/ecs/rollback.sh -e $(ENV)
+
+monitor-ecs:
+	@echo "Monitoring ECS $(ENV) environment..."
+	./scripts/ecs/monitor.sh -e $(ENV) -t -l -m -w
